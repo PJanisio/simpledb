@@ -39,9 +39,6 @@ $query4 = $DB->query('SELECT user FROM user'); //send query :)
     	}
 
 
-
-
-
 //Additional functions
         
 echo 'Affected rows: '.$DB->affected(); //List affected records by last query
@@ -59,8 +56,7 @@ echo '<br>';
 
 
 echo $DB->showError(); //Show last mysql error
-
-
-
+echo '<br>';
 
 ?>
+

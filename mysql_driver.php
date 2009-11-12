@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.1.8- beta
+Version: 0.1.8
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/trunk
@@ -45,7 +45,7 @@ private $db_password = '';
 private $db_database = 'mysql';
 
 /*
-Debug mode = 0 silent mode, no errors reporting!
+Debug mode = 0 silent mode, no errors reporting despite of this class!
 Debug mode = 1 normal work, error reporting like in php.ini [DEFUALT]
 Debug mode = 2 all php errors and warnings will be displayed + query time 
 int
@@ -79,22 +79,22 @@ public $exe = NULL;
                             {
                               case 0:
                               $this->debug = error_reporting(0);
-				$this->debuglevel = 0;
+				$this->debugLevel = 0;
                               break;
                               
                               case 1:
                               $this->debug = error_reporting(E_ALL ^ E_NOTICE);
-				$this->debuglevel = 1;
+				$this->debugLevel = 1;
                               break;
                               
                               case 2:
                               $this->debug = error_reporting(E_ALL);
-				$this->debuglevel = 2;
+				$this->debugLevel = 2;
                               break;
                               
                                 default:
                                 $this->debug = error_reporting(E_ALL ^ E_NOTICE);
-					$this->debuglevel = 1;   
+					$this->debugLevel = 1;   
                                 
                             }
 			
@@ -141,7 +141,7 @@ public $exe = NULL;
 				$this->resource = $resource;
 				}
 
-			if($this->debuglevel == 2)
+			if($this->debugLevel == 2)
 				{
                         	$start = $this->getTime();
 				}
@@ -149,7 +149,7 @@ public $exe = NULL;
 			if($this->resource == 1)
 			{
 				$this->result = mysql_query($this->syntax);
-				$this->queries++;
+				
 				
 				if(!$this->result)
 				{
@@ -161,7 +161,7 @@ public $exe = NULL;
 				else if($this->resource == 0)
 				{
 				$this->exe = mysql_query($this->syntax);
-				$this->queries++;
+				
 
 				if(!$this->result)
 				{
@@ -170,11 +170,15 @@ public $exe = NULL;
 				}
 				
 				}
-					if($this->debuglevel == 2)
+				if($this->result == TRUE || $this->exe == TRUE)
+				{ 
+					$this->queries++;
+					if($this->debugLevel == 2)
 							{
                              				$end = $this->getTime();
 							$this->syntaxes .= round($end-$start, 4).' sec. '.$this->syntax.'<br>';
 							}
+				}
 
 
 					if(isset($this->result))
@@ -195,7 +199,7 @@ public $exe = NULL;
         2- MYSQL_ASSOC
         3- MYSQL_NUM
         */
-	public function fetch($mode = NULL, $result = NULL)
+	public function fetch($result = NULL, $mode = NULL)
 		{
 				if($this->result && $this->connection)
 					{
@@ -336,7 +340,7 @@ public $exe = NULL;
             {
           $this->query('SHOW TABLES'); 
 
-          		while($table = $this->fetch(2))
+          		while($table = $this->fetch(NULL,2))
          			 {
 				 
           			foreach ($table as $db)
@@ -522,7 +526,7 @@ public $exe = NULL;
 		{
 			if($this->queries > 0)
 			{
-                if($this->debuglevel == 2)
+                if($this->debugLevel == 2)
                 {
                 
 				return $this->syntaxes;
@@ -574,7 +578,7 @@ public $exe = NULL;
 	public function showDebugLevel()
 	
 	{
-	return 'Debug level is now: '.$this->debuglevel.'';
+	return 'Debug level is now: '.$this->debugLevel.'';
 
 	}
 
@@ -590,7 +594,7 @@ public $exe = NULL;
                                                  {
 					$this->disconnect = @mysql_close($this->connection);
                                                  }
-                       
+					                       
 
 					unset($this->connection);
 					unset($this->database);
@@ -608,7 +612,7 @@ public $exe = NULL;
 					unset($this->lockedRead);
 					unset($this->lockedWrite);
 
-
+					//error_reporting(E_ALL ^ E_NOTICE);
 				}
 			
 	}
