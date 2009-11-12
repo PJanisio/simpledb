@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.1.7
+Version: 0.1.8- beta
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/trunk
@@ -70,6 +70,7 @@ private $result = NULL;
 private $vars = NULL;
 public $statistics = NULL;
 public $queries = 0;
+public $exe = NULL;
 
 	public function __construct ()
 			{
@@ -78,18 +79,22 @@ public $queries = 0;
                             {
                               case 0:
                               $this->debug = error_reporting(0);
+				$this->debuglevel = 0;
                               break;
                               
                               case 1:
                               $this->debug = error_reporting(E_ALL ^ E_NOTICE);
+				$this->debuglevel = 1;
                               break;
                               
                               case 2:
                               $this->debug = error_reporting(E_ALL);
+				$this->debuglevel = 2;
                               break;
                               
                                 default:
-                                $this->debug = error_reporting(E_ALL ^ E_NOTICE);   
+                                $this->debug = error_reporting(E_ALL ^ E_NOTICE);
+					$this->debuglevel = 1;   
                                 
                             }
 			
@@ -117,98 +122,78 @@ public $queries = 0;
 								return TRUE;
 
 			}
-            
-    /*
-    Make query to the database
-    */
-	public function query($syntax)
-
-		{
-			$this->syntax = $syntax;
-
-					if($this->connection)
-						{
-
-				$this->result = mysql_query($this->syntax);
-                
-                        if($this->debug == 2)
-                        	$start = $this->getTime();
-                        
-						if(!$this->result)
-							{
-							echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
-                            					return FALSE;
-							}
-						else
-						{
-                                		if($this->debug == 2)
-							{
-                             				$end = $this->getTime();
-							}
-                             
-							$this->queries++;
-							
-                            if($this->debug == 2)
-                               {
-				                $this->syntaxes .= round($end-$start, 4).' sec. '.$this->syntax.'<br>';
-                                }
-					return $this->result;
-					
-
-						}
-						}
-									
-		}
-
 	/*
-	Special query, that dont returns resource, only reports bug when query is failed
-	*/
+	Make query to database
+	*/            
 
-	public function onlyQuery($string)
-
+	public function query($syntax, $resource = NULL)
+		
 		{
-			$this->string = $string;
+			if($this->connection)
+			{
+			$this->syntax = $syntax;
+			if(!isset($resource))
+			{
+			$this->resource = 1;
+			}
+				else
+				{
+				$this->resource = $resource;
+				}
 
-					if($this->connection)
-						{
-
-				$this->execution = mysql_query($this->string);
-                
-                        if($this->debug == 2)
+			if($this->debuglevel == 2)
+				{
                         	$start = $this->getTime();
-                        
-						if(!$this->execution)
-							{
-							echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
-                            					return FALSE;
-							}
-						else
-						{
-                                		if($this->debug == 2)
+				}
+			
+			if($this->resource == 1)
+			{
+				$this->result = mysql_query($this->syntax);
+				$this->queries++;
+				
+				if(!$this->result)
+				{
+				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+                            	return FALSE;
+				}
+
+			}
+				else if($this->resource == 0)
+				{
+				$this->exe = mysql_query($this->syntax);
+				$this->queries++;
+
+				if(!$this->result)
+				{
+				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+                            	return FALSE;
+				}
+				
+				}
+					if($this->debuglevel == 2)
 							{
                              				$end = $this->getTime();
+							$this->syntaxes .= round($end-$start, 4).' sec. '.$this->syntax.'<br>';
 							}
-                             
-							$this->queries++;
-							
-                            if($this->debug == 2)
-                               {
-				$this->syntaxes .= round($end-$start, 4).' sec. '.$this->string.'<br>';
-                                }
-					return TRUE;
-					
 
-						}
-						}
-									
+
+					if(isset($this->result))
+						return $this->result;
+
+							else if(isset($this->exe))
+						return TRUE;
+
+
+		}
 		}
 
+	
 
         /*
         Fetch results from last query, you can choose mode
-        1- MYSQL_ASSOC
-        2- MYSQL_NUM
-        3- MYSQL_BOTH
+        1- MYSQL_BOTH
+        2- MYSQL_ASSOC
+        3- MYSQL_NUM
         */
 	public function fetch($mode = NULL, $result = NULL)
 		{
@@ -241,6 +226,7 @@ public $queries = 0;
 						$this->result = $result;
 
 						}
+
 			$this->fetched = mysql_fetch_array($this->result, $this->mode);
 
 				if($this->fetched)
@@ -294,7 +280,7 @@ public $queries = 0;
             {
             foreach (func_get_args() as $tablename) 
             {
-               $this->lockedRead = $this->onlyQuery('LOCK TABLES '.$tablename.' READ');
+               $this->lockedRead = $this->query('LOCK TABLES '.$tablename.' READ',0);
 
                     }
 			if($this->lockedRead)
@@ -313,7 +299,7 @@ public $queries = 0;
             {
             foreach (func_get_args() as $tablename) 
             {
-                $this->lockedWrite = $this->onlyQuery('LOCK TABLES '.$tablename.' WRITE');
+                $this->lockedWrite = $this->query('LOCK TABLES '.$tablename.' WRITE',0);
                
                     }
 			if($this->lockedWrite)
@@ -329,13 +315,14 @@ public $queries = 0;
         {
             if($this->connection)
             {
-            $this->unlock = $this->onlyQuery('UNLOCK TABLES');
+            $this->unlock = $this->query('UNLOCK TABLES',0);
             }
                 if($this->unlock)
                     {
                      return TRUE;   
                     }
         }
+
            
             
     /*
@@ -349,14 +336,13 @@ public $queries = 0;
             {
           $this->query('SHOW TABLES'); 
 
-          		while($table = $this->fetch(1))
-         			 { 
+          		while($table = $this->fetch(2))
+         			 {
+				 
           			foreach ($table as $db)
             			{ 
 		
-       		$this->optimization = $this->onlyQuery('OPTIMIZE TABLE '.$db.'');
-		
-			if($this->optimization)
+       		$this->query('OPTIMIZE TABLE '.$db.'', 0);
         			echo $db.' - Optimized<br>'; 
             
             			} 
@@ -536,7 +522,7 @@ public $queries = 0;
 		{
 			if($this->queries > 0)
 			{
-                if($this->debug == 2)
+                if($this->debuglevel == 2)
                 {
                 
 				return $this->syntaxes;
@@ -545,6 +531,8 @@ public $queries = 0;
 				else
 				echo 'Debug mode must be ENABLED (2) to use this function';
         }
+		else
+		echo 'no queries found';
 
 		}
         
@@ -564,7 +552,8 @@ public $queries = 0;
 
      /*
       Show last errors
-      */   
+      */
+   
     public function showError()
     
     {
@@ -579,15 +568,25 @@ public $queries = 0;
 
     }
 
+	/*
+	Show actual debug level
+	*/
+	
+	public function showDebugLevel()
+	
+	{
+	return 'Debug level is now: '.$this->debuglevel.'';
+
+	}
+
+
     /*
       Close connections and unset all variables
       */
+
 	public function __destruct() 
 				{
-                     if($this->result)
-                            {
-                                mysql_free_result($this->result);
-                            }
+                    
                             if($this->connection)
                                                  {
 					$this->disconnect = @mysql_close($this->connection);

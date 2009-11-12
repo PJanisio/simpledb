@@ -33,6 +33,11 @@ echo '<br>';
 echo $DB->showSyntaxes();
 echo '<br>';
 
+//Show debug level
+
+echo $DB->showDebugLevel();
+echo '<br>';
+
 //Locks tables db, event, func from WRITE access
 
 if($DB->LockTableRead('db','bans','func') == TRUE)

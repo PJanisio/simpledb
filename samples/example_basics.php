@@ -21,7 +21,7 @@ $query4 = $DB->query('SELECT user FROM user'); //send query :)
 
 
 
-#First option -> u use only $DB->fetch(1) and $buffer will get result from LAST query
+#First option -> u use only $DB->fetch() and $buffer will get result from LAST query
 
 
 	while($buffer = $DB->fetch()) //fetch result to array - basic method
