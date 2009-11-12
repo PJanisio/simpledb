@@ -531,8 +531,7 @@ public $exe = NULL;
 				else
 				echo 'Debug mode must be ENABLED (2) to use this function';
         }
-		else
-		echo 'no queries found';
+	//no queries
 
 		}
         
