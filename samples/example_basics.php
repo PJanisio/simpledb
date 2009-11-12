@@ -24,15 +24,15 @@ $query4 = $DB->query('SELECT user FROM user'); //send query :)
 #First option -> u use only $DB->fetch(1) and $buffer will get result from LAST query
 
 
-	while($buffer = $DB->fetch(1)) //fetch result to array - basic method
+	while($buffer = $DB->fetch()) //fetch result to array - basic method
     	{ 
 	echo $buffer['user'].'<br>'; //where 'user' is a name of desired row in table
     	}
 
-#Second option -> you can choose, from which query you want to get result $DB->fetch(1, $query2)
+#Second option -> you can choose, from which query you want to get result $DB->fetch($query2)
 
 
-	while($buffer = $DB->fetch(1, $query2)) 
+	while($buffer = $DB->fetch($query2)) 
 
     	{ 
 	echo $buffer['password'].'<br>'; 

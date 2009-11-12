@@ -210,7 +210,7 @@ public $queries = 0;
         2- MYSQL_NUM
         3- MYSQL_BOTH
         */
-	public function fetch($mode, $result = NULL)
+	public function fetch($mode = NULL, $result = NULL)
 		{
 				if($this->result && $this->connection)
 					{
@@ -219,19 +219,19 @@ public $queries = 0;
                         switch ($mode)
                             {
                               case 1:
-                              $this->mode = MYSQL_ASSOC;
-                              break;
-                              
-                              case 2:
-                              $this->mode = MYSQL_NUM;
-                              break;
-                              
-                              case 3:
                               $this->mode = MYSQL_BOTH;
                               break;
                               
+                              case 2:
+                              $this->mode = MYSQL_ASSOC;
+                              break;
+                              
+                              case 3:
+                              $this->mode = MYSQL_NUM;
+                              break;
+                              
                                 default:
-                                $this->mode = MYSQL_ASSOC;  
+                                $this->mode = MYSQL_BOTH;  
                                 
                             }
 				
