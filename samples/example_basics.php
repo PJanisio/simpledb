@@ -40,9 +40,6 @@ $query4 = $DB->query('SELECT user FROM user'); //send query :)
 
 
 //Additional functions
-        
-echo 'Affected rows: '.$DB->affected(); //List affected records by last query
-echo '<br>'; 
 
 echo 'Number of rows from last query: '.$DB->numRows(); 
 echo '<br>';

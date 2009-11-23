@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.1.9 - beta
+Version: 0.1.9
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
@@ -59,13 +59,12 @@ private $debug = 1;
 protected $connection = NULL;
 protected $database = NULL;
 protected $error = NULL;
-protected $disconnect = NULL;
-protected $affected = 0; 
+protected $disconnect = NULL; 
 protected $syntaxes = NULL;
 private $fetched = array();
 private $lockedRead = NULL;
 private $lockedWrite = NULL;
-private $rows = NULL;
+private $rows = 0;
 private $result = NULL;
 private $vars = NULL;
 public $statistics = NULL;
@@ -75,7 +74,7 @@ public $exe = NULL;
 	public function __construct ()
 			{
                 
-                 switch ($this->debug)       // maybe switch ;]
+                 switch ($this->debug)
                             {
                               case 0:
                               $this->debug = error_reporting(0);
@@ -107,7 +106,7 @@ public $exe = NULL;
 
 				if(!$this->connection)
 					{
-					echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+					$this->throwError();
 						return FALSE;
 					} 
                             			else 
@@ -115,7 +114,7 @@ public $exe = NULL;
                             
 					if(!$this->database)
 						{
-							echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error(); 
+							$this->throwError(); 
 							return FALSE;
 						}
 							else
@@ -153,7 +152,7 @@ public $exe = NULL;
 				
 				if(!$this->result)
 				{
-				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+				$this->throwError();
                             	return FALSE;
 				}
 
@@ -165,7 +164,7 @@ public $exe = NULL;
 
 				if(!$this->result)
 				{
-				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+				$this->throwError();
                             	return FALSE;
 				}
 				
@@ -233,13 +232,13 @@ public $exe = NULL;
 
 			$this->fetched = @mysql_fetch_array($this->result, $this->mode);
 
-				if($this->fetched)
+				if(is_array($this->fetched))
 					{
 					return $this->fetched;
 					}
 					else
 					{
-					echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+					$this->throwError();
                             		return FALSE;
 					}
 
@@ -247,23 +246,15 @@ public $exe = NULL;
 		}
 
       /*
-      Count affected rows from query
+      Function throwing error syntax
       */
-	public function affected() //choose query?
+	public function throwError() 
 		{
-				if($this->result)
-				{
-			        $this->affected = @mysql_affected_rows();
-                    			if($this->affected)
-                    			return $this->affected;
-						else
-						{
-						echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
-                            			return FALSE;
-						}
-				
-				}	
+		if(mysql_error() != NULL)
+			echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+
 		}
+		
 
        /*
       Create new database with default charset
@@ -435,7 +426,7 @@ public $exe = NULL;
 				return TRUE;
 					else 
 					{
-				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+				$this->throwError();
                             	return FALSE;
 					}
 
@@ -466,7 +457,7 @@ public $exe = NULL;
 
 				if(!$this->connection)
 					{
-					echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+					$this->throwError();
 						return FALSE;
 					} 
                             			else 
@@ -474,7 +465,7 @@ public $exe = NULL;
                             
 					if(!$this->database)
 						{
-							echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error(); 
+							$this->throwError(); 
 							return FALSE;
 						}
 							else
@@ -531,7 +522,7 @@ public $exe = NULL;
 			return $this->rows;
 				else
 				{
-				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+				$this->throwError();
                             	return FALSE;
 				}
 		}
@@ -612,12 +603,13 @@ public $exe = NULL;
                                                  {
 					$this->disconnect = @mysql_close($this->connection);
                                                  }
+					if(!$this->disconnect)
+						$this->throwError();
 					                       
 
 					unset($this->connection);
 					unset($this->database);
 					unset($this->fetched);
-                    			unset($this->affected);
                     			unset($this->error);
                     			unset($this->debug);
                    			unset($this->statistics);
