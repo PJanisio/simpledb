@@ -2,10 +2,10 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.1.8
+Version: 0.1.9 - beta
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
-SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/trunk
+SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
 */
 
 
@@ -45,9 +45,9 @@ private $db_password = '';
 private $db_database = 'mysql';
 
 /*
-Debug mode = 0 silent mode, no errors reporting despite of this class!
-Debug mode = 1 normal work, error reporting like in php.ini [DEFUALT]
-Debug mode = 2 all php errors and warnings will be displayed + query time 
+Debug mode = 0 silent mode, no errors reporting!
+Debug mode = 1 normal work, error reporting like in php.ini + errors from class[DEFUALT]
+Debug mode = 2 all php errors and warnings will be displayed + query time and syntaxes 
 int
 */
 	
@@ -98,11 +98,11 @@ public $exe = NULL;
                                 
                             }
 			
-		$this->connection = mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
+		$this->connection = @mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
                 
-                    if($this->connection == TRUE)
+                    if($this->connection)
                     {                              
-			$this->database = mysql_select_db ($this->db_database);
+			$this->database = @mysql_select_db ($this->db_database);
                     }
 
 				if(!$this->connection)
@@ -148,7 +148,7 @@ public $exe = NULL;
 			
 			if($this->resource == 1)
 			{
-				$this->result = mysql_query($this->syntax);
+				$this->result = @mysql_query($this->syntax);
 				
 				
 				if(!$this->result)
@@ -160,7 +160,7 @@ public $exe = NULL;
 			}
 				else if($this->resource == 0)
 				{
-				$this->exe = mysql_query($this->syntax);
+				$this->exe = @mysql_query($this->syntax);
 				
 
 				if(!$this->result)
@@ -231,11 +231,16 @@ public $exe = NULL;
 
 						}
 
-			$this->fetched = mysql_fetch_array($this->result, $this->mode);
+			$this->fetched = @mysql_fetch_array($this->result, $this->mode);
 
 				if($this->fetched)
 					{
 					return $this->fetched;
+					}
+					else
+					{
+					echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+                            		return FALSE;
 					}
 
 					}
@@ -244,13 +249,18 @@ public $exe = NULL;
       /*
       Count affected rows from query
       */
-	public function affected()
+	public function affected() //choose query?
 		{
 				if($this->result)
 				{
-			        $this->affected = mysql_affected_rows();
-                    
+			        $this->affected = @mysql_affected_rows();
+                    			if($this->affected)
                     			return $this->affected;
+						else
+						{
+						echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+                            			return FALSE;
+						}
 				
 				}	
 		}
@@ -364,8 +374,8 @@ public $exe = NULL;
         {
             if($this->connection)
                 {
-                 $this->clear = $this->query('TRUNCATE TABLE '.$table.'');
-                    if($this->truncate)
+                 $this->clear = $this->query('TRUNCATE TABLE '.$table.'',0);
+                    if($this->clear)
                         {
                             echo 'Table '.$table.' has been cleared';
                         }
@@ -412,7 +422,7 @@ public $exe = NULL;
 	*/
 	public function forceDisconnect()
 		{
-			$this->disconnect = mysql_close($this->connection);
+			$this->disconnect = @mysql_close($this->connection);
 
 					unset($this->connection);
 					unset($this->db_host);
@@ -424,7 +434,10 @@ public $exe = NULL;
 				if($this->disconnect)
 				return TRUE;
 					else 
-					return FALSE;
+					{
+				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+                            	return FALSE;
+					}
 
 
 
@@ -444,11 +457,11 @@ public $exe = NULL;
 			$this->db_password = $password;
 			$this->db_database = $database;
 
-				$this->connection = mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
+				$this->connection = @mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
                 
-                    if($this->connection == TRUE)
+                    if($this->connection)
                     {                              
-			$this->database = mysql_select_db ($this->db_database);
+			$this->database = @mysql_select_db ($this->db_database);
                     }
 
 				if(!$this->connection)
@@ -512,10 +525,15 @@ public $exe = NULL;
 				{
 				$this->result = $res;
 				}
-				$this->rows = mysql_num_rows($this->result);
+				$this->rows = @mysql_num_rows($this->result);
 				}
-
+				if($this->rows)
 			return $this->rows;
+				else
+				{
+				echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
+                            	return FALSE;
+				}
 		}
 
 	/*
@@ -590,7 +608,7 @@ public $exe = NULL;
 	public function __destruct() 
 				{
                     
-                            if($this->connection)
+                            		if($this->connection)
                                                  {
 					$this->disconnect = @mysql_close($this->connection);
                                                  }
