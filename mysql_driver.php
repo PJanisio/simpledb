@@ -510,21 +510,28 @@ public $exe = NULL;
 
 	public function numRows($res = NULL)
 		{
-			if($this->result)
-				{
+			if($this->connection)
+			{
 				if(isset($res))
 				{
 				$this->result = $res;
-				}
 				$this->rows = @mysql_num_rows($this->result);
 				}
+					else
+						{
+							if(isset($this->result))
+							$this->rows = @mysql_num_rows($this->result);
+
+						}
+
 				if($this->rows)
-			return $this->rows;
+				return $this->rows;
 				else
 				{
 				$this->throwError();
                             	return FALSE;
 				}
+			}
 		}
 
 	/*
