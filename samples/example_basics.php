@@ -1,5 +1,7 @@
 <?php
 
+session_start(); //if u want include more information about error
+
 /*
 SimpleDB
 by Pawel 'Pavlus' Janisio
@@ -49,11 +51,22 @@ echo '<br>';
 
 
 echo 'Queries: '.$DB->queries; //Number of queries done by script
-echo '<br>'; 
+echo '<br><br>'; 
 
 
 echo $DB->showError(); //Show last mysql error
+
+echo '<hr>';
+echo '<br><b>Detailed info about errors (if any):</b><br>';
+if($DB->countErrors() > 0)
+	{
+echo 'Error in: '.$_SESSION['error_script'].'<br>';
+echo 'Caused by in: '.$_SESSION['error_sdb'].'<br>';
+echo 'Server at: '.$_SESSION['error_env'].'<br>';
+echo 'Mysql user: '.$_SESSION['error_user'].'<br>';
+echo 'Error time: '.$_SESSION['error_time'];
 echo '<br>';
+	}
 
 ?>
 

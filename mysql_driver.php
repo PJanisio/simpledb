@@ -53,6 +53,15 @@ int
 	
 private $debug = 1;
 
+/*
+Exit while error.
+This variable when ednabled (1) terminates your program in case of ay error
+Default value is 0
+int
+*/
+
+private $exit = 0; 
+
 // Do not change variables below, there is no need to do it
 
 
@@ -69,6 +78,7 @@ private $result = NULL;
 private $vars = NULL;
 public $statistics = NULL;
 public $queries = 0;
+public $errors = 0;
 public $exe = NULL;
 
 	public function __construct ()
@@ -97,6 +107,7 @@ public $exe = NULL;
                                 
                             }
 			
+			//connection start here
 		$this->connection = @mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
                 
                     if($this->connection)
@@ -106,7 +117,7 @@ public $exe = NULL;
 
 				if(!$this->connection)
 					{
-					$this->throwError();
+					$this->throwError($this->exit);
 						return FALSE;
 					} 
                             			else 
@@ -114,13 +125,48 @@ public $exe = NULL;
                             
 					if(!$this->database)
 						{
-							$this->throwError(); 
+							$this->throwError($this->exit); 
 							return FALSE;
 						}
 							else
 								return TRUE;
 
 			}
+
+
+      /*
+	Function throwing error.
+	If you want detailed information, do not forger to add session_start(); at the begining of
+	your file.
+
+	Also if you want to terminate your script, change $exit value to (1) at the top of the class
+      */
+	public function throwError($exit) 
+		{
+			
+		if(mysql_error() != NULL)
+		{
+			$_SESSION['error_env'] = $_SERVER['SERVER_NAME'];
+			$_SESSION['error_script'] =  $_SERVER['PHP_SELF']; //get line number??
+			$_SESSION['error_sdb'] = __FILE__.':'.__LINE__;
+			$_SESSION['error_user'] = $this->db_user; 
+			$_SESSION['error_time'] = date("j-m-Y, H:i:s");
+			$_SESSION['error_num'] = mysql_errno();
+			$_SESSION['error_syn'] = mysql_error();
+
+			echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error().'<br>';
+				$this->errors++;
+
+				if($this->exit == 1)
+					{
+					exit();
+					echo 'Application terminated';
+					}
+		}
+
+
+		}
+
 	/*
 	Make query to database
 	*/            
@@ -152,7 +198,7 @@ public $exe = NULL;
 				
 				if(!$this->result)
 				{
-				$this->throwError();
+				$this->throwError($this->exit);
                             	return FALSE;
 				}
 
@@ -164,7 +210,7 @@ public $exe = NULL;
 
 				if(!$this->result)
 				{
-				$this->throwError();
+				$this->throwError($this->exit);
                             	return FALSE;
 				}
 				
@@ -238,22 +284,13 @@ public $exe = NULL;
 					}
 					else
 					{
-					$this->throwError();
+					$this->throwError($this->exit);
                             		return FALSE;
 					}
 
 					}
 		}
 
-      /*
-      Function throwing error syntax
-      */
-	public function throwError() 
-		{
-		if(mysql_error() != NULL)
-			echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error();
-
-		}
 		
 
        /*
@@ -268,8 +305,8 @@ public $exe = NULL;
 			if($this->creator)
 				{
 				echo 'Database '.$name.' has been created';
-                                    	return TRUE;
 				}
+
 
 		        	}
         
@@ -426,7 +463,7 @@ public $exe = NULL;
 				return TRUE;
 					else 
 					{
-				$this->throwError();
+				$this->throwError($this->exit);
                             	return FALSE;
 					}
 
@@ -457,7 +494,7 @@ public $exe = NULL;
 
 				if(!$this->connection)
 					{
-					$this->throwError();
+					$this->throwError($this->exit);
 						return FALSE;
 					} 
                             			else 
@@ -465,7 +502,7 @@ public $exe = NULL;
                             
 					if(!$this->database)
 						{
-							$this->throwError(); 
+							$this->throwError($this->exit); 
 							return FALSE;
 						}
 							else
@@ -528,7 +565,7 @@ public $exe = NULL;
 				return $this->rows;
 				else
 				{
-				$this->throwError();
+				$this->throwError($this->exit);
                             	return FALSE;
 				}
 			}
@@ -573,19 +610,30 @@ public $exe = NULL;
       Show last errors
       */
    
-    public function showError()
+	public function showError()
     
-    {
-        if(!empty($this->error))
+   	 {
+        if($this->errors > 0)
             {
         echo 'Last SimpleDB error:</br>';
-    
-            return $this->error;
+    	return $this->error;
             }
             else
                 return 'No errors found';
 
-    }
+   	 }
+
+	/*
+	Function to count number of errors
+	*/
+
+	public function countErrors()
+	
+	{
+
+	return $this->errors;
+
+	}
 
 	/*
 	Show actual debug level
@@ -611,7 +659,7 @@ public $exe = NULL;
 					$this->disconnect = @mysql_close($this->connection);
                                                  }
 					if(!$this->disconnect)
-						$this->throwError();
+						$this->throwError($this->exit);
 					                       
 
 					unset($this->connection);

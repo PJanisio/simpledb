@@ -40,7 +40,7 @@ echo '<br>';
 
 //Locks tables db, event, func from WRITE access
 
-if($DB->LockTableRead('db','bans','func') == TRUE)
+if($DB->LockTableRead('db','bans','func'))
 echo 'Tables locked from write';
 echo '<br>';
 
