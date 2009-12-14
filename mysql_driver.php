@@ -227,10 +227,10 @@ public $exe = NULL;
 
 
 					if(isset($this->result))
-						return $this->result;
+						return $this->result; //returning resource
 
 							else if(isset($this->exe))
-						return TRUE;
+						return TRUE; //returning bool :)
 
 
 		}
@@ -468,7 +468,6 @@ public $exe = NULL;
 					}
 
 
-
 		}
 
 	/*
@@ -661,23 +660,18 @@ public $exe = NULL;
 					if(!$this->disconnect)
 						$this->throwError($this->exit);
 					                       
-
+						//free memory
 					unset($this->connection);
 					unset($this->database);
 					unset($this->fetched);
                     			unset($this->error);
-                    			unset($this->debug);
-                   			unset($this->statistics);
-                    			unset($this->vars);
 					unset($this->db_host);
 					unset($this->db_port);
 					unset($this->db_user);
 					unset($this->db_password);
 					unset($this->db_database);
-					unset($this->lockedRead);
-					unset($this->lockedWrite);
 
-					//error_reporting(E_ALL ^ E_NOTICE);
+
 				}
 			
 	}
