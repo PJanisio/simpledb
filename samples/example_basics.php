@@ -16,7 +16,7 @@ require_once('../mysql_driver.php'); //include class file
 
 $DB = new DB_MYSQL; //connect to database
 
-$query1 = $DB->query('SELECT host FROM user'); //send query
+$query1 = $DB->query('SELECT hosst FROM user'); //send query
 $query2 = $DB->query('SELECT password FROM user'); //send query
 $query3 = $DB->query('SELECT * FROM help_topic'); //send query :)
 $query4 = $DB->query('SELECT user FROM user'); //send query :)
@@ -57,15 +57,21 @@ echo '<br><br>';
 echo $DB->showError(); //Show last mysql error
 
 echo '<hr>';
-echo '<br><b>Detailed info about errors (if any):</b><br>';
-if($DB->countErrors() > 0)
+
+//Sample error output
+
+if($DB->countErrors() > 0) //if error exist
 	{
-echo 'Error in: '.$_SESSION['error_script'].'<br>';
-echo 'Caused by in: '.$_SESSION['error_sdb'].'<br>';
-echo 'Server at: '.$_SESSION['error_env'].'<br>';
-echo 'Mysql user: '.$_SESSION['error_user'].'<br>';
-echo 'Error time: '.$_SESSION['error_time'];
-echo '<br>';
+echo '<br><u>Detailed info about errors:</u><br>';
+
+
+echo '<b>Caused by: </b>'.$_SESSION['error_sdb'].'<br>'; //class file error
+echo '<b>Server at: </b>'.$_SESSION['error_env'].'<br>'; //mysql host
+echo '<b>Mysql user: </b>'.$_SESSION['error_user'].'<br>'; //actual mysql user
+echo '<b>Error time: </b>'.$_SESSION['error_time'].'<br><br>'; //error time
+
+
+echo '<b>Full backrace: </b><br>'.$_SESSION['output_backtrace'].'<br>'; //fully backtrace reproducing error
 	}
 
 ?>

@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.1.9
+Version: 0.2.0
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
@@ -51,7 +51,7 @@ Debug mode = 2 all php errors and warnings will be displayed + query time and sy
 int
 */
 	
-private $debug = 1;
+private $debug = 0;
 
 /*
 Exit while error.
@@ -80,6 +80,7 @@ public $statistics = NULL;
 public $queries = 0;
 public $errors = 0;
 public $exe = NULL;
+public $backtrace = NULL;
 
 	public function __construct ()
 			{
@@ -107,7 +108,7 @@ public $exe = NULL;
                                 
                             }
 			
-			//connection start here
+			//connection starts here
 		$this->connection = @mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
                 
                     if($this->connection)
@@ -141,18 +142,24 @@ public $exe = NULL;
 
 	Also if you want to terminate your script, change $exit value to (1) at the top of the class
       */
+	 
 	public function throwError($exit) 
 		{
 			
 		if(mysql_error() != NULL)
 		{
+			
+			
 			$_SESSION['error_env'] = $_SERVER['SERVER_NAME'];
+
 			$_SESSION['error_script'] =  $_SERVER['PHP_SELF']; //get line number??
 			$_SESSION['error_sdb'] = __FILE__.':'.__LINE__;
+
 			$_SESSION['error_user'] = $this->db_user; 
 			$_SESSION['error_time'] = date("j-m-Y, H:i:s");
 			$_SESSION['error_num'] = mysql_errno();
 			$_SESSION['error_syn'] = mysql_error();
+			$_SESSION['output_backtrace'] = $this->parseBacktrace(debug_backtrace());
 
 			echo $this->error ='MySQL Error #'.mysql_errno().' Syntax: '.mysql_error().'<br>';
 				$this->errors++;
@@ -165,6 +172,25 @@ public $exe = NULL;
 		}
 
 
+		}
+	/*
+	This function throws full backtrace if error occurs.
+	*/
+		
+	public function parseBacktrace($raw)
+		{
+
+        
+        foreach($raw as $entry){ 
+                $this->backtrace.="File: ".$entry['file']." (Line: ".$entry['line'].")<br>"; 
+                $this->backtrace.="Function: ".$entry['function']."<br>"; 
+                $this->backtrace.="Args: ".implode(", ", $entry['args'])."<br>"; 
+        } 
+
+        return $this->backtrace; 
+		
+		
+		
 		}
 
 	/*
