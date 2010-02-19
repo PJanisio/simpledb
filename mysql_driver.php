@@ -2,56 +2,24 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.0
+Version: 0.2.1
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
 */
 
+/*
+TODO:
+# $this->exit, dont touch it in class file
+# optimizing fnction rewrite
+# check samples
 
+*/
 
 
 class DB_MySQL
 
 	{
-        
- //       
-// Some of variables you will have to fill before using
- //
-
-// Datbase host - most common: localhost - mysql server you want to connect
-// string
-
-private $db_host = 'localhost';
-
-// Connection port - default: 3306
-// int
-
-private $db_port = 3306;
-
-// Username which is allowed to connect to mysql server - default: root
-// string
-
-private $db_user = 'root';
-
-// User password, in clean installation of mysql user password is empty
-// string
- 
-private $db_password = '';
-
-// Database you want to connect
-// string
-
-private $db_database = 'mysql';
-
-/*
-Debug mode = 0 silent mode, no errors reporting!
-Debug mode = 1 normal work, error reporting like in php.ini + errors from class[DEFUALT]
-Debug mode = 2 all php errors and warnings will be displayed + query time and syntaxes 
-int
-*/
-	
-private $debug = 0;
 
 /*
 Exit while error.
@@ -62,14 +30,17 @@ int
 
 private $exit = 0; 
 
-// Do not change variables below, there is no need to do it
-
 
 protected $connection = NULL;
 protected $database = NULL;
 protected $error = NULL;
 protected $disconnect = NULL; 
 protected $syntaxes = NULL;
+private $db_host = '';
+private $db_port = 0;
+private $db_user = '';
+private $db_password = '';
+private $db_database = '';
 private $fetched = array();
 private $lockedRead = NULL;
 private $lockedWrite = NULL;
@@ -79,32 +50,41 @@ private $vars = NULL;
 public $statistics = NULL;
 public $queries = 0;
 public $errors = 0;
+public $debugLevel = 0;
 public $exe = NULL;
 public $backtrace = NULL;
 
-	public function __construct ()
+	public function __construct ($db_host, $db_port, $db_user, $db_password, $db_database, $debug_level = NULL)
 			{
+				//assign variables
+				$this->db_host = $db_host;
+				$this->db_port = $db_port;
+				$this->db_user = $db_user;
+				$this->db_password = $db_password;
+				$this->db_database = $db_database;
+				
+				if(isset($debug_level))
+				$this->debugLevel = $debug_level;
+					else
+						$this->debugLevel = 1;
                 
-                 switch ($this->debug)
+                 switch ($this->debugLevel)
                             {
                               case 0:
-                              $this->debug = error_reporting(0);
-				$this->debugLevel = 0;
+                                error_reporting(0);
                               break;
                               
                               case 1:
-                              $this->debug = error_reporting(E_ALL ^ E_NOTICE);
-				$this->debugLevel = 1;
+                                error_reporting(E_ALL ^ E_NOTICE);
                               break;
                               
                               case 2:
-                              $this->debug = error_reporting(E_ALL);
-				$this->debugLevel = 2;
+                                error_reporting(E_ALL);
                               break;
                               
                                 default:
-                                $this->debug = error_reporting(E_ALL ^ E_NOTICE);
-					$this->debugLevel = 1;   
+                                $error_reporting(E_ALL ^ E_NOTICE);
+								$this->debugLevel = 1;   
                                 
                             }
 			
@@ -151,10 +131,8 @@ public $backtrace = NULL;
 			
 			
 			$_SESSION['error_env'] = $_SERVER['SERVER_NAME'];
-
-			$_SESSION['error_script'] =  $_SERVER['PHP_SELF']; //get line number??
+			$_SESSION['error_script'] =  $_SERVER['PHP_SELF']; 
 			$_SESSION['error_sdb'] = __FILE__.':'.__LINE__;
-
 			$_SESSION['error_user'] = $this->db_user; 
 			$_SESSION['error_time'] = date("j-m-Y, H:i:s");
 			$_SESSION['error_num'] = mysql_errno();
@@ -166,8 +144,8 @@ public $backtrace = NULL;
 
 				if($this->exit == 1)
 					{
-					exit();
 					echo 'Application terminated';
+					exit();
 					}
 		}
 
@@ -474,7 +452,7 @@ public $backtrace = NULL;
 	/*
 	Force disconnect from mysql, use only with reconnect function or let class close connection by itself
 	*/
-	public function forceDisconnect()
+	public function disconnect()
 		{
 			$this->disconnect = @mysql_close($this->connection);
 
@@ -486,7 +464,14 @@ public $backtrace = NULL;
 					unset($this->db_port);
 
 				if($this->disconnect)
-				return TRUE;
+					{
+						if($this->disconnect && $this->debugLevel == 2)
+						{
+						echo 'Disconnected';
+						return TRUE;
+						}
+						return TRUE;
+						}
 					else 
 					{
 				$this->throwError($this->exit);
@@ -496,45 +481,6 @@ public $backtrace = NULL;
 
 		}
 
-	/*
-	Connects again to mysql, usable when you want to change user or database
-	*/
-
-	public function reconnect($host, $port, $user, $password, $database)
-
-		{
-
-			$this->db_host = $host;
-			$this->db_port = $port;
-			$this->db_user = $user;
-			$this->db_password = $password;
-			$this->db_database = $database;
-
-				$this->connection = @mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_password);
-                
-                    if($this->connection)
-                    {                              
-			$this->database = @mysql_select_db ($this->db_database);
-                    }
-
-				if(!$this->connection)
-					{
-					$this->throwError($this->exit);
-						return FALSE;
-					} 
-                            			else 
-                            				return TRUE;
-                            
-					if(!$this->database)
-						{
-							$this->throwError($this->exit); 
-							return FALSE;
-						}
-							else
-								return TRUE;
-
-
-		}
         
       /*
       List mysql variables such as client encoding and version
@@ -681,22 +627,21 @@ public $backtrace = NULL;
                     
                             		if($this->connection)
                                                  {
-					$this->disconnect = @mysql_close($this->connection);
+											$this->disconnect();
                                                  }
-					if(!$this->disconnect)
-						$this->throwError($this->exit);
 					                       
 						//free memory
 					unset($this->connection);
 					unset($this->database);
 					unset($this->fetched);
-                    			unset($this->error);
+                    unset($this->error);
 					unset($this->db_host);
 					unset($this->db_port);
 					unset($this->db_user);
 					unset($this->db_password);
 					unset($this->db_database);
 
+					
 
 				}
 			
