@@ -14,9 +14,12 @@ require_once('../mysql_driver.php'); //include class file
 //How to connect and get results from any mysql table
 
 
-$DB = new DB_MYSQL; //connect to database
+$DB = new DB_MYSQL('localhost','3306','root','password', 'mysql'); //connect to database (host, port, user, password, database)
 
-$query1 = $DB->query('SELECT hosst FROM user'); //send query
+//$DB = new DB_MYSQL('localhost','3306','root','password', 'mysql', 2); //connect to database with debug mode = 2
+
+
+$query1 = $DB->query('SELECT host FROM user'); //send query
 $query2 = $DB->query('SELECT password FROM user'); //send query
 $query3 = $DB->query('SELECT * FROM help_topic'); //send query :)
 $query4 = $DB->query('SELECT user FROM user'); //send query :)
@@ -55,6 +58,7 @@ echo '<br><br>';
 
 
 echo $DB->showError(); //Show last mysql error
+
 
 echo '<hr>';
 
