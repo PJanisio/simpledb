@@ -1,6 +1,5 @@
 <?php
 
-session_start(); //if u want include more information about error
 
 /*
 SimpleDB

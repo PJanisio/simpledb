@@ -16,7 +16,7 @@ $DB = new DB_MYSQL('localhost','3306','root','password', 'mysql'); //connect to 
 //$DB->createDB('forgotten', 'latin1'); //create database 'forgotten' with latin1 default charset
 //echo '<br>';
 
-$DB->optimizeDB();  //database optimization
+$DB->optimizeDB(TRUE);  //database optimization  TRUE - to get output of optimized tables
 
 //$DB->importDumpexec('/home/pavlus/public_html/class_database/samples/mysqldump.sql'); //import sql file REMEMBER to use global path!
 

@@ -8,13 +8,6 @@ License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
 */
 
-/*
-TODO:
-# $this->exit, dont touch it in class file
-# optimizing fnction rewrite
-# check samples
-
-*/
 
 
 class DB_MySQL
@@ -35,24 +28,18 @@ protected $connection = NULL;
 protected $database = NULL;
 protected $error = NULL;
 protected $disconnect = NULL; 
-protected $syntaxes = NULL;
 private $db_host = '';
 private $db_port = 0;
 private $db_user = '';
 private $db_password = '';
 private $db_database = '';
 private $fetched = array();
-private $lockedRead = NULL;
-private $lockedWrite = NULL;
 private $rows = 0;
 private $result = NULL;
-private $vars = NULL;
-public $statistics = NULL;
 public $queries = 0;
 public $errors = 0;
-public $debugLevel = 0;
 public $exe = NULL;
-public $backtrace = NULL;
+
 
 	public function __construct ($db_host, $db_port, $db_user, $db_password, $db_database, $debug_level = NULL)
 			{
@@ -117,9 +104,6 @@ public $backtrace = NULL;
 
       /*
 	Function throwing error.
-	If you want detailed information, do not forger to add session_start(); at the begining of
-	your file.
-
 	Also if you want to terminate your script, change $exit value to (1) at the top of the class
       */
 	 
@@ -161,14 +145,16 @@ public $backtrace = NULL;
         
         foreach($raw as $entry){ 
                 $this->backtrace.="File: ".$entry['file']." (Line: ".$entry['line'].")<br>"; 
-                $this->backtrace.="Function: ".$entry['function']."<br>"; 
+                $this->backtrace.="Function: ".$entry['function']."<br>";
+                
+                if($_SESSION['error_num'] != 1045 )   //why would we parse login or password data? :)
+                { 
                 $this->backtrace.="Args: ".implode(", ", $entry['args'])."<br>"; 
+                } 
         } 
 
         return $this->backtrace; 
-		
-		
-		
+					
 		}
 
 	/*
@@ -224,7 +210,7 @@ public $backtrace = NULL;
 					$this->queries++;
 					if($this->debugLevel == 2)
 							{
-                             				$end = $this->getTime();
+                            $end = $this->getTime();
 							$this->syntaxes .= round($end-$start, 4).' sec. '.$this->syntax.'<br>';
 							}
 				}
@@ -375,7 +361,7 @@ public $backtrace = NULL;
     Optimize database
     */
     
-    public function optimizeDB()
+    public function optimizeDB($output = NULL)
     
         {
             if($this->connection)
@@ -389,7 +375,11 @@ public $backtrace = NULL;
             			{ 
 		
        		$this->query('OPTIMIZE TABLE '.$db.'', 0);
+            if($output == TRUE)
+                {
         			echo $db.' - Optimized<br>'; 
+                    
+                }
             
             			} 
     
