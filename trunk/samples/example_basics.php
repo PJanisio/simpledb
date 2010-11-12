@@ -56,7 +56,7 @@ echo 'Queries: '.$DB->queries; //Number of queries done by script
 echo '<br><br>'; 
 
 
-echo $DB->showError(); //Show last mysql error
+echo 'Last MySQL error: '.$DB->showError(); //Show last mysql error
 
 
 echo '<hr>';

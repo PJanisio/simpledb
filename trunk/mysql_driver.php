@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.1
+Version: 0.2.2
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
@@ -294,7 +294,7 @@ public $exe = NULL;
 
 			if($this->creator)
 				{
-				echo 'Database '.$name.' has been created';
+				return TRUE;
 				}
 
 
@@ -399,9 +399,9 @@ public $exe = NULL;
                  $this->clear = $this->query('TRUNCATE TABLE '.$table.'',0);
                     if($this->clear)
                         {
-                            echo 'Table '.$table.' has been cleared';
+                          return TRUE;  
                         }
-                	return TRUE;
+                	
                 }   
 
         }
@@ -423,14 +423,14 @@ public $exe = NULL;
 	
 						if($this->dump == 0)
 							{
-								echo 'Import resulted an error...';
+								//echo 'Import resulted an error...';
 								return FALSE;
 							}
 
 						}
 						else 
 							{
-							echo 'Import success!';
+							//echo 'Import success!';
 							return TRUE;
 
 							}
@@ -576,7 +576,6 @@ public $exe = NULL;
    	 {
         if($this->errors > 0)
             {
-        echo 'Last SimpleDB error:</br>';
     	return $this->error;
             }
             else
@@ -603,7 +602,7 @@ public $exe = NULL;
 	public function showDebugLevel()
 	
 	{
-	return 'Debug level is now: '.$this->debugLevel.'';
+	return $this->debugLevel;
 
 	}
 

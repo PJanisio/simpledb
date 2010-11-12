@@ -37,7 +37,7 @@ echo '<br>';
 
 //Show debug level
 
-echo $DB->showDebugLevel();
+echo 'Debug Level is now: '.$DB->showDebugLevel();    
 echo '<br>';
 
 //Locks tables db, event, func from WRITE access
