@@ -1,3 +1,0 @@
-- caching results
-- management of cache folder
-- cron?
