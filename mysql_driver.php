@@ -104,7 +104,7 @@ public $exe = NULL;
 
       /*
 	Function throwing error.
-	Also if you want to terminate your script, change $exit value to (1) at the top of the class
+	Also if you want to terminate your script after an error, change $exit value to (1) at the top of the class
       */
 	 
 	public function throwError($exit) 
@@ -137,6 +137,7 @@ public $exe = NULL;
 		}
 	/*
 	This function throws full backtrace if error occurs.
+	Fixed displaying connection details like host, password...
 	*/
 		
 	public function parseBacktrace($raw)
@@ -159,6 +160,8 @@ public $exe = NULL;
 
 	/*
 	Make query to database
+	Default - with result
+	$resource = 0 - only execution, no results avaible
 	*/            
 
 	public function query($syntax, $resource = NULL)
@@ -284,7 +287,7 @@ public $exe = NULL;
 		
 
        /*
-      Create new database with default charset
+      Create new database with setted name and charset, throwing an error while not sufficient access
       */
 	public function createDB($name, $charset)
 		{
@@ -303,26 +306,7 @@ public $exe = NULL;
         	}
             
     /*
-    Lock tables (READ) table will be locked from WRITE acces, READ access allowed
-    */   
-
-    public function LockTableRead() 
-        {
-            if($this->connection)
-            {
-            foreach (func_get_args() as $tablename) 
-            {
-               $this->lockedRead = $this->query('LOCK TABLES '.$tablename.' READ',0);
-
-                    }
-			if($this->lockedRead)
-                     return TRUE;
-			   
-            }
-        }
-        
-     /*
-    Lock tables (WRITE) table will be locked from READ and WRITE access
+    Lock tables (WRITE) table will be locked from WRITE access, READ access allowed
     */   
 
     public function LockTableWrite() 
@@ -331,10 +315,29 @@ public $exe = NULL;
             {
             foreach (func_get_args() as $tablename) 
             {
-                $this->lockedWrite = $this->query('LOCK TABLES '.$tablename.' WRITE',0);
-               
+               $this->lockedWrite = $this->query('LOCK TABLES '.$tablename.' READ',0); //dont look at arg. READ it will lock WRITING in :)
+
                     }
 			if($this->lockedWrite)
+                     return TRUE;
+			   
+            }
+        }
+        
+     /*
+    Lock tables (READ) table will be locked from READ and WRITE access
+    */   
+
+    public function LockTableRead() 
+        {
+            if($this->connection)
+            {
+            foreach (func_get_args() as $tablename) 
+            {
+                $this->lockedRead = $this->query('LOCK TABLES '.$tablename.' WRITE',0);
+               
+                    }
+			if($this->lockedRead)
                      return TRUE;   
             }
         }
@@ -409,6 +412,7 @@ public $exe = NULL;
 	
 	/*
 	Import dump using exec function, u have to be logged to mysql admin user
+	Works only on Unix like OS.
 	*/
 	public function importDumpexec($location)
 			{
@@ -440,7 +444,7 @@ public $exe = NULL;
 			}
 
 	/*
-	Force disconnect from mysql, use only with reconnect function or let class close connection by itself
+	FORCE disconnect from mysql. Killing connection.
 	*/
 	public function disconnect()
 		{
@@ -503,7 +507,8 @@ public $exe = NULL;
         }
 
 	/*
-	Returns number of rows executed by query
+	Returns affected rows, results made by query.
+	You can choose query, from which the number of results will be displayed
 	*/
 
 	public function numRows($res = NULL)
@@ -608,7 +613,7 @@ public $exe = NULL;
 
 
     /*
-      Close connections and unset all variables
+      Close connections and unset all variables (automatically)
       */
 
 	public function __destruct() 
@@ -617,17 +622,26 @@ public $exe = NULL;
                             		if($this->connection)
                                                  {
 											$this->disconnect();
+											unset($this->connection);
                                                  }
 					                       
 						//free memory
-					unset($this->connection);
+			
+						if(isset($this->database))
 					unset($this->database);
+						if(isset($this->fetched))
 					unset($this->fetched);
+						if(isset($this->error))
                     unset($this->error);
+						if(isset($this->db_host))
 					unset($this->db_host);
+						if(isset($this->db_port))
 					unset($this->db_port);
+						if(isset($this->db_user))
 					unset($this->db_user);
+						if(isset($this->db_password))
 					unset($this->db_password);
+						if(isset($this->database))
 					unset($this->db_database);
 
 					
