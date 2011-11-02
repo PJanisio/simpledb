@@ -528,11 +528,11 @@ public $exe = NULL;
 						}
 
 				if($this->rows)
-				return $this->rows;
+				return (int)$this->rows;
 				else
 				{
 				$this->throwError($this->exit);
-                            	return FALSE;
+                            	return 0;
 				}
 			}
 		}
