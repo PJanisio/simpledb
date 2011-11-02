@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.2
+Version: 0.2.2a
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
