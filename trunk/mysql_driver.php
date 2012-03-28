@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.2a
+Version: 0.2.3
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
@@ -142,13 +142,13 @@ public $exe = NULL;
 		
 	public function parseBacktrace($raw)
 		{
-
+			$forbidden = array(1045, 2003);
         
         foreach($raw as $entry){ 
                 $this->backtrace.="File: ".$entry['file']." (Line: ".$entry['line'].")<br>"; 
                 $this->backtrace.="Function: ".$entry['function']."<br>";
-                
-                if($_SESSION['error_num'] != 1045 )   //why would we parse login or password data? :)
+
+                if(!in_array($_SESSION['error_num'], $forbidden))  //why would we parse login or password data? :)
                 { 
                 $this->backtrace.="Args: ".implode(", ", $entry['args'])."<br>"; 
                 } 
@@ -411,9 +411,10 @@ public $exe = NULL;
 
 	
 	/*
+	DEPRACETED
 	Import dump using exec function, u have to be logged to mysql admin user
 	Works only on Unix like OS.
-	*/
+	
 	public function importDumpexec($location)
 			{
 				if($this->connection)
@@ -442,6 +443,8 @@ public $exe = NULL;
 					}
 
 			}
+			
+			*/
 
 	/*
 	FORCE disconnect from mysql. Killing connection.
