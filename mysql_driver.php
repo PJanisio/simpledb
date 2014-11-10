@@ -11,9 +11,7 @@ SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
 
 
 class DB_MySQL
-
 	{
-
 /*
 Exit while error.
 This variable when ednabled (1) terminates your program in case of ay error
@@ -22,7 +20,6 @@ int
 */
 
 private $exit = 0; 
-
 
 protected $connection = NULL;
 protected $database = NULL;
@@ -40,7 +37,6 @@ public $queries = 0;
 public $errors = 0;
 public $exe = NULL;
 
-
 	public function __construct ($db_host, $db_port, $db_user, $db_password, $db_database, $debug_level = NULL)
 			{
 				//assign variables
@@ -53,8 +49,7 @@ public $exe = NULL;
 				if(isset($debug_level))
 				$this->debugLevel = $debug_level;
 					else
-						$this->debugLevel = 1;
-                
+						$this->debugLevel = 1;             
                  switch ($this->debugLevel)
                             {
                               case 0:
@@ -71,8 +66,7 @@ public $exe = NULL;
                               
                                 default:
                                 $error_reporting(E_ALL ^ E_NOTICE);
-								$this->debugLevel = 1;   
-                                
+								$this->debugLevel = 1;                               
                             }
 			
 			//connection starts here
@@ -100,8 +94,6 @@ public $exe = NULL;
 								return TRUE;
 
 			}
-
-
       /*
 	Function throwing error.
 	Also if you want to terminate your script after an error, change $exit value to (1) at the top of the class
@@ -112,8 +104,7 @@ public $exe = NULL;
 			
 		if(mysql_error() != NULL)
 		{
-			
-			
+						
 			$_SESSION['error_env'] = $_SERVER['SERVER_NAME'];
 			$_SESSION['error_script'] =  $_SERVER['PHP_SELF']; 
 			$_SESSION['error_sdb'] = __FILE__.':'.__LINE__;
@@ -132,7 +123,6 @@ public $exe = NULL;
 					exit();
 					}
 		}
-
 
 		}
 	/*
@@ -154,8 +144,7 @@ public $exe = NULL;
                 } 
         } 
 
-        return $this->backtrace; 
-					
+        return $this->backtrace; 				
 		}
 
 	/*
@@ -218,18 +207,13 @@ public $exe = NULL;
 							}
 				}
 
-
 					if(isset($this->result))
 						return $this->result; //returning resource
 
 							else if(isset($this->exe))
 						return TRUE; //returning bool :)
-
-
 		}
 		}
-
-	
 
         /*
         Fetch results from last query, you can choose mode
@@ -282,9 +266,7 @@ public $exe = NULL;
 					}
 
 					}
-		}
-
-		
+		}	
 
        /*
       Create new database with setted name and charset, throwing an error while not sufficient access
@@ -299,8 +281,6 @@ public $exe = NULL;
 				{
 				return TRUE;
 				}
-
-
 		        	}
         
         	}
@@ -319,8 +299,7 @@ public $exe = NULL;
 
                     }
 			if($this->lockedWrite)
-                     return TRUE;
-			   
+                     return TRUE;		   
             }
         }
         
@@ -356,9 +335,7 @@ public $exe = NULL;
                     {
                      return TRUE;   
                     }
-        }
-
-           
+        }         
             
     /*
     Optimize database
@@ -382,16 +359,13 @@ public $exe = NULL;
                 {
         			echo $db.' - Optimized<br>'; 
                     
-                }
-            
+                }           
             			} 
     
           			}
             }
             
-        }
-
-            
+        }            
     /*
     Clear (truncate) table from records
     */
@@ -403,52 +377,12 @@ public $exe = NULL;
                     if($this->clear)
                         {
                           return TRUE;  
-                        }
-                	
+                        }                	
                 }   
-
         }
 
-	
-	/*
-	DEPRACETED
-	Import dump using exec function, u have to be logged to mysql admin user
-	Works only on Unix like OS.
-	
-	public function importDumpexec($location)
-			{
-				if($this->connection)
-					{
-						if(file_exists($location) && function_exists('exec'))
-						{
-							//check if superuser!
 
-						$cmd = '/usr/bin/mysql -h '.$this->db_host.' -u '.$this->db_user.' -p'.$this->db_password.' '.$this->db_database.' < '.$location;
-						$this->dump = exec($cmd, $result);
-	
-						if($this->dump == 0)
-							{
-								//echo 'Import resulted an error...';
-								return FALSE;
-							}
-
-						}
-						else 
-							{
-							//echo 'Import success!';
-							return TRUE;
-
-							}
-
-					}
-
-			}
-			
-			*/
-
-	/*
-	FORCE disconnect from mysql. Killing connection.
-	*/
+	//FORCE disconnect from mysql. Killing connection.
 	public function disconnect()
 		{
 			$this->disconnect = @mysql_close($this->connection);
@@ -474,11 +408,8 @@ public $exe = NULL;
 				$this->throwError($this->exit);
                             	return FALSE;
 					}
-
-
 		}
-
-        
+      
       /*
       List mysql variables such as client encoding and version
       */  
@@ -492,7 +423,6 @@ public $exe = NULL;
 
                     		return $this->vars;
                 } 
-
         }
       /*
       Show mysql statistics like queries per second, long queries, uptime and so one
@@ -551,8 +481,7 @@ public $exe = NULL;
                 if($this->debugLevel == 2)
                 {
                 
-				return $this->syntaxes;
-			
+				return $this->syntaxes;		
 			}
 				else
 				echo 'Debug mode must be ENABLED (2) to use this function';
@@ -574,7 +503,6 @@ public $exe = NULL;
             
             
         }
-
      /*
       Show last errors
       */
@@ -588,7 +516,6 @@ public $exe = NULL;
             }
             else
                 return 'No errors found';
-
    	 }
 
 	/*
@@ -596,11 +523,8 @@ public $exe = NULL;
 	*/
 
 	public function countErrors()
-	
 	{
-
 	return $this->errors;
-
 	}
 
 	/*
@@ -611,9 +535,7 @@ public $exe = NULL;
 	
 	{
 	return $this->debugLevel;
-
 	}
-
 
     /*
       Close connections and unset all variables (automatically)
@@ -646,11 +568,7 @@ public $exe = NULL;
 					unset($this->db_password);
 						if(isset($this->database))
 					unset($this->db_database);
-
-					
-
-				}
-			
+				}			
 	}
 
 
