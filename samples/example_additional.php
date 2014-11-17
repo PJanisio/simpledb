@@ -18,33 +18,41 @@ $DB = new DB_MYSQL('localhost','3306','root','password', 'mysql'); //connect to 
 
 $DB->optimizeDB(TRUE);  //database optimization  TRUE - to get output of optimized tables
 
-//$DB->importDumpexec('/home/pavlus/public_html/class_database/samples/mysqldump.sql'); //import sql file REMEMBER to use global path!
-
 //Functions displaying mysql server statistics and variables
 
-echo $DB->dbVars();
-echo '<br>';
+$variables = $DB->dbVars();
+
+echo $variables[0];
+echo '<br><br>';
+echo $variables[1];
+echo '<br><br>';
+echo $variables[2];
+echo '<br><br>';
+echo $variables[3];
+echo '<br><br>';
+echo $variables[4];
+echo '<br><br>';
 
 //Display various statistics
 
 echo $DB->dbStatistics();
-echo '<br>';
+echo '<br><br>';
 
 //Queries syntax display
 
 echo $DB->showSyntaxes();
-echo '<br>';
+echo '<br><br>';
 
 //Show debug level
 
 echo 'Debug Level is now: '.$DB->showDebugLevel();    
-echo '<br>';
+echo '<br><br>';
 
 //Locks tables db, event, func from WRITE access
 
 if($DB->LockTableRead('db','bans','func'))
 echo 'Tables locked from write';
-echo '<br>';
+echo '<br><br>';
 
 
 //unlocks all locked tables  

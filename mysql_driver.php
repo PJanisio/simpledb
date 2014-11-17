@@ -5,9 +5,8 @@ SimpleDB - Mysql driver class
 Version: 0.2.3
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
-SVN: http://code.google.com/p/simplemysqlclass/source/browse/#svn/
+GIT: https://github.com/PJanisio/simpledb.git
 */
-
 
 
 class DB_MySQL
@@ -32,7 +31,7 @@ private $db_password = '';
 private $db_database = '';
 private $fetched = array();
 private $rows = 0;
-private $result = NULL;
+private $result = NULL; 
 public $queries = 0;
 public $errors = 0;
 public $exe = NULL;
@@ -119,7 +118,7 @@ public $exe = NULL;
 
 				if($this->exit == 1)
 					{
-					echo 'Application terminated';
+					//echo 'Application terminated';
 					exit();
 					}
 		}
@@ -176,8 +175,7 @@ public $exe = NULL;
 			if($this->resource == 1)
 			{
 				$this->result = @mysql_query($this->syntax);
-				
-				
+		
 				if(!$this->result)
 				{
 				$this->throwError($this->exit);
@@ -411,17 +409,22 @@ public $exe = NULL;
 		}
       
       /*
-      List mysql variables such as client encoding and version
+      List mysql variables such as client encoding and version, host and protocol info
       */  
 
     public function dbVars()
         {
            if($this->connection)
-                {
-                  $this->vars .= 'Client Encoding: '.mysql_client_encoding($this->connection).'</br>';
-                        $this->vars .= 'Server Version: '.mysql_get_server_info().'</br>';
-
-                    		return $this->vars;
+                {					
+					$this->vars['client_encoding'] = mysql_client_encoding($this->connection);
+					$this->vars['server_version'] = mysql_client_encoding($this->connection);
+					$this->vars['mysql_get_client_info'] = mysql_get_client_info();
+					$this->vars['mysql_get_host_info'] = mysql_get_host_info($this->connection);
+					$this->vars['mysql_get_proto_info'] = mysql_get_proto_info($this->connection);
+							
+                    		return array($this->vars['client_encoding'], $this->vars['server_version'],
+							$this->vars['mysql_get_client_info'], $this->vars['mysql_get_host_info'],
+							$this->vars['mysql_get_proto_info'] );
                 } 
         }
       /*
