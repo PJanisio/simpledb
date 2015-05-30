@@ -1,4 +1,4 @@
-=SimpleDB 0.2.3=
+=SimpleDB 0.2.4=
 `Code simple - solute everything` 
 
 Mysql driver class (wrapper) for PHP5.
