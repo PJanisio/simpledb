@@ -9,6 +9,7 @@ Not overengineered!
 ----
 
 ===Changelog===
+ * new version *0.2.4* available (30 May 2015)
  * new version *0.2.3* available (27 Mar 2012)
  * new version 0.2.2a available (02 Nov 2011)
  * new version 0.2.2 available (12 Nov 2010)
