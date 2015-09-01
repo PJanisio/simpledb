@@ -2,7 +2,7 @@
 
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.3
+Version: 0.2.4
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 GIT: https://github.com/PJanisio/simpledb.git
