@@ -10,28 +10,26 @@ require_once ('../mysql_driver.php');
  // include class file
 // How to connect and get results from any mysql table
 
-$DB = new DB_MYSQL('localhost', '3306', 'root', 'password', 'mysql'); //connect to database (host, port, user, password, database)
+$DB = new DB_MYSQL('localhost', 'root', 'password','database_name', 3306, 2); //connect to database (host, login, password, database, port, debug level)
 
-// $DB = new DB_MYSQL('localhost','3306','root','password', 'mysql', 2); //connect to database with debug mode = 2
+// $DB = new DB_MYSQL('localhost','root','password', 'mysql', 3306, 2); //connect to database with debug mode = 2
 
-$query1 = $DB->query('SELECT host FROM user'); //send query
+$query1 = $DB->query('SELECT nick FROM players'); //send query
 $query2 = $DB->query('SELECT password FROM user'); //send query
-$query3 = $DB->query('SELECT * FROM help_topic'); //send query :)
-$query4 = $DB->query('SELECT user FROM user'); //send query :)
 
 // First option -> u use only $DB->fetch() and $buffer will get result from LAST query
 
 while ($buffer = $DB->fetch()) //fetch result to array - basic method
 
 	{
-	echo $buffer['user'] . '<br />'; //where 'user' is a name of desired row in table
+	echo $buffer['nick'] . '<br />'; //where 'user' is a name of desired row in table
 	}
 
 // Second option -> you can choose, from which query you want to get result $DB->fetch($query2)
 
 while ($buffer = $DB->fetch($query2))
 	{
-	echo $buffer['password'] . '<br />';
+	echo $buffer['nick'] . '<br />';
 	}
 
 // Additional functions

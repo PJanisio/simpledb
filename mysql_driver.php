@@ -21,7 +21,7 @@ class DB_MySQL
 	protected $error = NULL;
 	protected $disconnect = NULL;
 	private $db_host = '';
-	private $db_port = 0;
+	private $db_port = 3306;
 	private $db_user = '';
 	private $db_password = '';
 	private $db_database = '';
@@ -29,14 +29,15 @@ class DB_MySQL
 	private $rows = 0;
 	private $result = NULL;
 	public $queries = 0;
-
+	public $backtrace = '';
 	public $errors = 0;
+	public $syntaxes = '';
 
 	public $exe = NULL;
 
 	public
 
-	function __construct($db_host, $db_port, $db_user, $db_password, $db_database, $debug_level = NULL)
+	function __construct($db_host, $db_user, $db_password, $db_database, $db_port = NULL, $debug_level = NULL)
 		{
 
 		// assign variables
@@ -69,19 +70,9 @@ class DB_MySQL
 
 		// connection starts here
 
-		$this->connection = @mysql_connect($this->db_host . ':' . $this->db_port, $this->db_user, $this->db_password);
-		if ($this->connection)
-			{
-			$this->database = @mysql_select_db($this->db_database);
-			}
+		$this->connection = @mysqli_connect($this->db_host, $this->db_user, $this->db_password, $this->db_database, $this->db_port = 3306, $debug_level = NULL);
 
 		if (!$this->connection)
-			{
-			$this->throwError($this->exit);
-			return FALSE;
-			}
-		  else return TRUE;
-		if (!$this->database)
 			{
 			$this->throwError($this->exit);
 			return FALSE;
@@ -97,23 +88,28 @@ class DB_MySQL
 
 	function throwError($exit)
 		{
-		if (mysql_error() != NULL)
+			if (!$this->connection)
+			{
+			echo $this->error = 'Can not connect to database: ' . mysqli_connect_error();
+			$this->errors++;
+			exit(); //need to terminate
+				
+			}
+			
+		if (mysqli_error($this->connection) != NULL)
 			{
 			$_SESSION['error_env'] = $_SERVER['SERVER_NAME'];
 			$_SESSION['error_script'] = $_SERVER['PHP_SELF'];
 			$_SESSION['error_sdb'] = __FILE__ . ':' . __LINE__;
 			$_SESSION['error_user'] = $this->db_user;
 			$_SESSION['error_time'] = date("j-m-Y, H:i:s");
-			$_SESSION['error_num'] = mysql_errno();
-			$_SESSION['error_syn'] = mysql_error();
+			$_SESSION['error_num'] = mysqli_errno($this->connection);
+			$_SESSION['error_syn'] = mysqli_error($this->connection);
 			$_SESSION['output_backtrace'] = $this->parseBacktrace(debug_backtrace());
-			echo $this->error = 'MySQL Error #' . mysql_errno() . ' Syntax: ' . mysql_error() . '<br />';
+			echo $this->error = 'MySQL Error #' . mysqli_errno($this->connection) . ' Syntax: ' . mysqli_error($this->connection) . '<br />';
 			$this->errors++;
 			if ($this->exit == 1)
 				{
-
-				// echo 'Application terminated';
-
 				exit();
 				}
 			}
@@ -172,7 +168,7 @@ class DB_MySQL
 
 			if ($this->resource == 1)
 				{
-				$this->result = @mysql_query($this->syntax);
+				$this->result = @mysqli_query($this->connection, $this->syntax);
 				if (!$this->result)
 					{
 					$this->throwError($this->exit);
@@ -182,7 +178,7 @@ class DB_MySQL
 			  else
 			if ($this->resource == 0)
 				{
-				$this->exe = @mysql_query($this->syntax);
+				$this->exe = @mysqli_query($this->connection, $this->syntax);
 				if (!$this->result)
 					{
 					$this->throwError($this->exit);
@@ -222,19 +218,19 @@ class DB_MySQL
 			switch ($mode)
 				{
 			case 1:
-				$this->mode = MYSQL_BOTH;
+				$this->mode = MYSQLI_BOTH;
 				break;
 
 			case 2:
-				$this->mode = MYSQL_ASSOC;
+				$this->mode = MYSQLI_ASSOC;
 				break;
 
 			case 3:
-				$this->mode = MYSQL_NUM;
+				$this->mode = MYSQLI_NUM;
 				break;
 
 			default:
-				$this->mode = MYSQL_BOTH;
+				$this->mode = MYSQLI_BOTH;
 				}
 
 			if (isset($result)) //if you want to choose other than last result
@@ -245,7 +241,7 @@ class DB_MySQL
 				$this->result = $result;
 				}
 
-			$this->fetched = @mysql_fetch_array($this->result, $this->mode);
+			$this->fetched = @mysqli_fetch_array($this->result, $this->mode);
 			if (is_array($this->fetched))
 				{
 				return $this->fetched;
@@ -376,7 +372,7 @@ class DB_MySQL
 
 	function disconnect()
 		{
-		$this->disconnect = @mysql_close($this->connection);
+		$this->disconnect = @mysqli_close($this->connection);
 		unset($this->connection);
 		unset($this->db_host);
 		unset($this->db_login);
@@ -409,11 +405,11 @@ class DB_MySQL
 		{
 		if ($this->connection)
 			{
-			$this->vars['client_encoding'] = mysql_client_encoding($this->connection);
-			$this->vars['server_version'] = mysql_client_encoding($this->connection);
-			$this->vars['mysql_get_client_info'] = mysql_get_client_info();
-			$this->vars['mysql_get_host_info'] = mysql_get_host_info($this->connection);
-			$this->vars['mysql_get_proto_info'] = mysql_get_proto_info($this->connection);
+			$this->vars['client_encoding'] = mysqli_client_encoding($this->connection);
+			$this->vars['server_version'] = mysqli_get_server_version($this->connection);
+			$this->vars['mysql_get_client_info'] = mysqli_get_client_info();
+			$this->vars['mysql_get_host_info'] = mysqli_get_host_info($this->connection);
+			$this->vars['mysql_get_proto_info'] = mysqli_get_proto_info($this->connection);
 			return array(
 				$this->vars['client_encoding'],
 				$this->vars['server_version'],
@@ -433,7 +429,7 @@ class DB_MySQL
 		{
 		if ($this->connection)
 			{
-			$this->statistics = mysql_stat($this->connection);
+			$this->statistics = mysqli_stat($this->connection);
 			return $this->statistics;
 			}
 		}
@@ -451,11 +447,11 @@ class DB_MySQL
 			if (isset($res))
 				{
 				$this->result = $res;
-				$this->rows = @mysql_num_rows($this->result);
+				$this->rows = @mysqli_num_rows($this->result);
 				}
 			  else
 				{
-				if (isset($this->result)) $this->rows = @mysql_num_rows($this->result);
+				if (isset($this->result)) $this->rows = @mysqli_num_rows($this->result);
 				}
 
 			if ($this->rows) return (int)$this->rows;
