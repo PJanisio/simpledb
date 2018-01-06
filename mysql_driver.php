@@ -203,6 +203,7 @@ class DB_MySQL
 		}
 
 	/*
+	TODO: Get rid of this!
 	Fetch results from last query, you can choose mode
 	1- MYSQL_BOTH
 	2- MYSQL_ASSOC
@@ -405,13 +406,16 @@ class DB_MySQL
 		{
 		if ($this->connection)
 			{
+				/*
+			this function has been DEPRECATED as of PHP 5.3.0 and REMOVED as of PHP 5.4.0. 
 			$this->vars['client_encoding'] = mysqli_client_encoding($this->connection);
+				*/
 			$this->vars['server_version'] = mysqli_get_server_version($this->connection);
 			$this->vars['mysql_get_client_info'] = mysqli_get_client_info();
 			$this->vars['mysql_get_host_info'] = mysqli_get_host_info($this->connection);
 			$this->vars['mysql_get_proto_info'] = mysqli_get_proto_info($this->connection);
 			return array(
-				$this->vars['client_encoding'],
+				//$this->vars['client_encoding'],
 				$this->vars['server_version'],
 				$this->vars['mysql_get_client_info'],
 				$this->vars['mysql_get_host_info'],
@@ -506,7 +510,7 @@ class DB_MySQL
 			{
 			return $this->error;
 			}
-		  else return 'No errors found';
+		  else return FALSE;
 		}
 
 	/*

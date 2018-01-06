@@ -9,11 +9,7 @@ require_once ('../mysql_driver.php');
 
  // include class file
 
-$DB = new DB_MYSQL('localhost', '3306', 'root', 'password', 'mysql'); //connect to database (host, port, user, password, database)
-
-// $DB = new DB_MYSQL('localhost','3306','root','password', 'mysql', 2); //connect to database with debug mode = 2
-// $DB->createDB('forgotten', 'latin1'); //create database 'forgotten' with latin1 default charset
-// echo '<br />';
+$DB = new DB_MYSQL('localhost', 'root', 'passwd','db', 3306, 2); //connect to database (host, login, password, database, port, debug level)
 
 $DB->optimizeDB(TRUE); //database optimization  TRUE - to get output of optimized tables
 
