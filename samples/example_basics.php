@@ -14,7 +14,7 @@ $DB = new DB_MYSQL('localhost', 'root', 'passwd','db', 3306); //connect to datab
 
 // $DB = new DB_MYSQL('localhost','root','password', 'mysql', 3306, 2); //connect to database with debug mode = 2
 
-$query1 = $DB->query('SELECT nick FROM players'); //send query
+$query1 = $DB->query("SELECT nick FROM players"); //send query
 
 /*
 $DB->fetch() will get results from last query.
