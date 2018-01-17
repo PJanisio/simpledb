@@ -16,7 +16,7 @@ class DB_MySQL
 	int
 	*/
 	private $exit = 0;
-	protected $connection = NULL;
+	public $connection = NULL;
 	protected $database = NULL;
 	protected $error = NULL;
 	protected $disconnect = NULL;
