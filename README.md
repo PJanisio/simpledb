@@ -1,4 +1,4 @@
-=SimpleDB 0.2.4=
+=SimpleDB 0.2.5=
 `Code simple - solute everything` 
 
 Mysql driver class (wrapper) for PHP5.
@@ -9,6 +9,7 @@ Not overengineered!
 ----
 
 ===Changelog===
+ * new version *0.2.5* available (17 Mar 2018)
  * new version *0.2.4* available (30 May 2015)
  * new version *0.2.3* available (27 Mar 2012)
  * new version 0.2.2a available (02 Nov 2011)
