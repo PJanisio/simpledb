@@ -2,7 +2,7 @@
 
 `Code simple - solute everything` 
 
-Mysql driver class (wrapper) for PHP5.
+Mysql driver class (wrapper) for PHP5+ (including PHP7+).
 Clearly programmed, very easy to use in your application.
 
 Not overengineered!
