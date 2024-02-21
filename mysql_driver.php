@@ -64,7 +64,7 @@ class DB_MySQL
 			break;
 
 		default:
-			$error_reporting(E_ALL ^ E_NOTICE);
+			error_reporting(E_ALL ^ E_NOTICE);
 			$this->debugLevel = 1;
 			}
 
@@ -75,9 +75,7 @@ class DB_MySQL
 		if (!$this->connection)
 			{
 			$this->throwError($this->exit);
-			return FALSE;
 			}
-		  else return TRUE;
 		}
 
 	/*
