@@ -1,15 +1,13 @@
-=SimpleDB 0.2.5=
+=SimpleDB 0.2.6=
 
-`Code simple - solute everything` 
 
-Mysql driver class (wrapper) for PHP5+ (including PHP7+).
-Clearly programmed, very easy to use in your application.
-
-Not overengineered!
+Mysqli driver class for PHP 7.4+.
+Lightweight and easy to use
 
 ----
 
 ===Changelog===
+ * new version *0.2.6* available (15 May 2024)
  * new version *0.2.5* available (17 Mar 2018)
  * new version *0.2.4* available (30 May 2015)
  * new version *0.2.3* available (27 Mar 2012)
@@ -29,7 +27,7 @@ Not overengineered!
 
  * connect, query, fetch to array (MYSQL_ASSOC, MYSQL_NUM and MYSQL_BOTH)
  * affected records, query count, query time
- * empty queries (no resource!)
+ * empty queries
  * mysql variables, statistics, last errors
  * locking, unlocking tables
  * fast database optimization
