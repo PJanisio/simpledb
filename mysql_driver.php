@@ -1,7 +1,7 @@
 <?php
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.7
+Version: 0.2.8
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 github: https://github.com/PJanisio/simpledb
@@ -26,7 +26,8 @@ class DB_MySQL
     private string $db_user = '';
     private string $db_password = '';
     private string $db_database = '';
-    private string $fetched;
+    private array $fetched;
+    private array $vars;
     private int $rows = 0;
     private int $debugLevel = 0;
     public $result;
@@ -37,8 +38,6 @@ class DB_MySQL
     public string $syntax;
     public $resource;
     public ?bool $mode;
-    public array $vars;
-    public $statistics;
 
     public ?bool $exe = NULL;
 
@@ -410,8 +409,8 @@ class DB_MySQL
       {
         if ($this->connection)
           {
-            $this->statistics = mysqli_stat($this->connection);
-            return $this->statistics;
+            $statistics = mysqli_stat($this->connection);
+            return $statistics;
           }
       }
 
