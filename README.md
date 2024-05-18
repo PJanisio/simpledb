@@ -1,4 +1,4 @@
-=SimpleDB 0.2.6=
+=SimpleDB 1.2.10=
 
 
 Mysqli driver class for PHP 7.4+.
@@ -7,6 +7,7 @@ Lightweight and easy to use
 ----
 
 ===Changelog===
+ * new version *1.2.10* available (18 May 2024)
  * new version *0.2.6* available (15 May 2024)
  * new version *0.2.5* available (17 Mar 2018)
  * new version *0.2.4* available (30 May 2015)
