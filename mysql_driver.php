@@ -1,7 +1,7 @@
 <?php
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.6
+Version: 0.2.7
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 github: https://github.com/PJanisio/simpledb
@@ -21,21 +21,26 @@ class DB_MySQL
     protected $database = NULL;
     protected $error = NULL;
     protected $disconnect = NULL;
-    private $db_host = '';
-    private $db_port = 3306;
-    private $db_user = '';
-    private $db_password = '';
-    private $db_database = '';
-    private $fetched = array();
-    private $rows = 0;
-    private $debugLevel = 0;
-    private $result = NULL;
-    public $queries = 0;
-    public $backtrace = '';
-    public $errors = 0;
-    public $syntaxes = '';
+    private string $db_host = '';
+    private int $db_port = 3306;
+    private string $db_user = '';
+    private string $db_password = '';
+    private string $db_database = '';
+    private string $fetched;
+    private int $rows = 0;
+    private int $debugLevel = 0;
+    public $result;
+    public int $queries = 0;
+    public string $backtrace = '';
+    public int $errors = 0;
+    public string $syntaxes = '';
+    public string $syntax;
+    public $resource;
+    public ?bool $mode;
+    public array $vars;
+    public $statistics;
 
-    public $exe = NULL;
+    public ?bool $exe = NULL;
 
     /*
     Look at the debug level, default is 1  error_reporting(E_ERROR | E_WARNING | E_PARSE) but if
@@ -258,8 +263,8 @@ class DB_MySQL
       {
         if ($this->connection)
           {
-            $this->creator = $this->query('CREATE DATABASE ' . $name . ' DEFAULT CHARACTER SET ' . $charset . '');
-            if ($this->creator)
+            $creator = $this->query('CREATE DATABASE ' . $name . ' DEFAULT CHARACTER SET ' . $charset . '');
+            if ($creator)
               {
                 return TRUE;
               }
@@ -275,11 +280,11 @@ class DB_MySQL
           {
             foreach (func_get_args() as $tablename)
               {
-                $this->lockedWrite = $this->query('LOCK TABLES ' . $tablename . ' READ', 0); //dont look at arg. READ it will lock WRITING in :)
+                $lockedWrite = $this->query('LOCK TABLES ' . $tablename . ' READ', 0); //dont look at arg. READ it will lock WRITING in :)
                 
               }
 
-            if ($this->lockedWrite) return TRUE;
+            if ($lockedWrite) return TRUE;
           }
       }
 
@@ -292,10 +297,10 @@ class DB_MySQL
           {
             foreach (func_get_args() as $tablename)
               {
-                $this->lockedRead = $this->query('LOCK TABLES ' . $tablename . ' WRITE', 0);
+                $lockedRead = $this->query('LOCK TABLES ' . $tablename . ' WRITE', 0);
               }
 
-            if ($this->lockedRead) return TRUE;
+            if ($lockedRead) return TRUE;
           }
       }
 
@@ -306,10 +311,10 @@ class DB_MySQL
       {
         if ($this->connection)
           {
-            $this->unlock = $this->query('UNLOCK TABLES', 0);
+            $unlock = $this->query('UNLOCK TABLES', 0);
           }
 
-        if ($this->unlock)
+        if ($unlock)
           {
             return TRUE;
           }
@@ -344,8 +349,8 @@ class DB_MySQL
       {
         if ($this->connection)
           {
-            $this->clear = $this->query('TRUNCATE TABLE ' . $table . '', 0);
-            if ($this->clear)
+            $clear = $this->query('TRUNCATE TABLE ' . $table . '', 0);
+            if ($clear)
               {
                 return TRUE;
               }
@@ -358,7 +363,7 @@ class DB_MySQL
         $this->disconnect = @mysqli_close($this->connection);
         unset($this->connection);
         unset($this->db_host);
-        unset($this->db_login);
+        unset($this->db_user);
         unset($this->db_password);
         unset($this->db_database);
         unset($this->db_port);
