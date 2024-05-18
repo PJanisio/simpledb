@@ -1,7 +1,7 @@
 <?php
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.8
+Version: 0.2.9
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 github: https://github.com/PJanisio/simpledb
@@ -9,7 +9,7 @@ github: https://github.com/PJanisio/simpledb
 class DB_MySQL
 
   {
-    private $exit = 0;
+    private int $exit = 0;
     /*
     Exit while error.
     This variable when ednabled (1) terminates your program in case of ay error
@@ -19,22 +19,22 @@ class DB_MySQL
 
     public $connection = NULL;
     protected $database = NULL;
-    protected $error = NULL;
+    protected ?bool $error = NULL;
     protected $disconnect = NULL;
-    private string $db_host = '';
+    private string $db_host;
     private int $db_port = 3306;
-    private string $db_user = '';
-    private string $db_password = '';
-    private string $db_database = '';
-    private array $fetched;
+    private string $db_user;
+    private string $db_password;
+    private string $db_database;
+    private $fetched;
     private array $vars;
     private int $rows = 0;
     private int $debugLevel = 0;
     public $result;
     public int $queries = 0;
-    public string $backtrace = '';
+    public string $backtrace;
     public int $errors = 0;
-    public string $syntaxes = '';
+    public string $syntaxes;
     public string $syntax;
     public $resource;
     public ?bool $mode;
@@ -76,7 +76,7 @@ class DB_MySQL
           }
 
         // connection starts here
-        $this->connection = mysqli_connect($this->db_host, $this->db_user, $this->db_password, $this->db_database, $this->db_port = 3306, $debug_level = NULL);
+        $this->connection = mysqli_connect($this->db_host, $this->db_user,  $this->db_password, $this->db_database, $this->db_port = 3306, $debug_level = NULL);
 
         if (!$this->connection)
           {
