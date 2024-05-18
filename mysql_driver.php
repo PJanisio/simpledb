@@ -1,7 +1,7 @@
 <?php
 /*
 SimpleDB - Mysql driver class
-Version: 0.2.9
+Version: 1.2.10
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 github: https://github.com/PJanisio/simpledb
@@ -21,11 +21,11 @@ class DB_MySQL
     protected $database = NULL;
     protected ?bool $error = NULL;
     protected $disconnect = NULL;
-    private string $db_host;
+    private string $db_host = '';
     private int $db_port = 3306;
-    private string $db_user;
-    private string $db_password;
-    private string $db_database;
+    private string $db_user = '';
+    private string $db_password = '';
+    private string $db_database = '';
     private $fetched;
     private array $vars;
     private int $rows = 0;
@@ -34,12 +34,12 @@ class DB_MySQL
     public int $queries = 0;
     public string $backtrace;
     public int $errors = 0;
-    public string $syntaxes;
-    public string $syntax;
+    public string $syntaxes = '';
+    public string $syntax = '';
     public $resource;
     public ?bool $mode;
 
-    public ?bool $exe = NULL;
+    public $exe = NULL;
 
     /*
     Look at the debug level, default is 1  error_reporting(E_ERROR | E_WARNING | E_PARSE) but if
@@ -389,15 +389,15 @@ class DB_MySQL
             $this->vars['client_encoding'] = mysqli_client_encoding($this->connection);
             */
             $this->vars['server_version'] = mysqli_get_server_version($this->connection);
-            $this->vars['mysql_get_client_info'] = mysqli_get_client_info();
-            $this->vars['mysql_get_host_info'] = mysqli_get_host_info($this->connection);
-            $this->vars['mysql_get_proto_info'] = mysqli_get_proto_info($this->connection);
+            $this->vars['mysqli_get_client_info'] = mysqli_get_client_info();
+            $this->vars['mysqli_get_host_info'] = mysqli_get_host_info($this->connection);
+            $this->vars['mysqli_get_proto_info'] = mysqli_get_proto_info($this->connection);
             return array(
                 //$this->vars['client_encoding'],
                 $this->vars['server_version'],
-                $this->vars['mysql_get_client_info'],
-                $this->vars['mysql_get_host_info'],
-                $this->vars['mysql_get_proto_info']
+                $this->vars['mysqli_get_client_info'],
+                $this->vars['mysqli_get_host_info'],
+                $this->vars['mysqli_get_proto_info']
             );
           }
       }

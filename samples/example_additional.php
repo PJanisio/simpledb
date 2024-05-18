@@ -16,16 +16,10 @@ $DB->optimizeDB(TRUE); //database optimization  TRUE - to get output of optimize
 // Functions displaying mysql server statistics and variables
 
 $variables = $DB->dbVars();
-echo $variables[0];
-echo '<br /><br />';
-echo $variables[1];
-echo '<br /><br />';
-echo $variables[2];
-echo '<br /><br />';
-echo $variables[3];
-echo '<br /><br />';
-echo $variables[4];
-echo '<br /><br />';
+
+echo '<pre>';
+var_dump($variables);
+echo '</pre>';
 
 // Display various statistics
 
@@ -49,5 +43,8 @@ echo '<br /><br />';
 
 // unlocks all locked tables
 
-$DB->Unlock();
+$unlock = $DB->Unlock();
+    if($unlock == TRUE) {
+        echo 'Tables unlocked';
+    }
 ?>
