@@ -1,4 +1,4 @@
-=SimpleDB 1.2.10=
+=SimpleDB 1.2.11=
 
 
 Mysqli driver class for PHP 7.4+.
