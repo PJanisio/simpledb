@@ -1,7 +1,7 @@
 <?php
 /*
 SimpleDB - Mysql driver class
-Version: 1.2.10
+Version: 1.2.11
 Author: Pawel 'Pavlus' Janisio
 License: GPL v3
 github: https://github.com/PJanisio/simpledb
@@ -19,27 +19,26 @@ class DB_MySQL
 
     public $connection = NULL;
     protected $database = NULL;
-    protected ?bool $error = NULL;
+    protected $error = NULL;
     protected $disconnect = NULL;
     private string $db_host = '';
     private int $db_port = 3306;
     private string $db_user = '';
     private string $db_password = '';
     private string $db_database = '';
-    private $fetched;
-    private array $vars;
+    private $fetched = array();
+    public $resource;
     private int $rows = 0;
     private int $debugLevel = 0;
-    public $result;
+    private $result = NULL;
+    private array $vars;
+    private $mode;
     public int $queries = 0;
-    public string $backtrace;
+    public string $backtrace = '';
     public int $errors = 0;
     public string $syntaxes = '';
     public string $syntax = '';
-    public $resource;
-    public ?bool $mode;
-
-    public $exe = NULL;
+    public ?bool $exe = NULL;
 
     /*
     Look at the debug level, default is 1  error_reporting(E_ERROR | E_WARNING | E_PARSE) but if
@@ -76,7 +75,7 @@ class DB_MySQL
           }
 
         // connection starts here
-        $this->connection = mysqli_connect($this->db_host, $this->db_user,  $this->db_password, $this->db_database, $this->db_port = 3306, $debug_level = NULL);
+        $this->connection = mysqli_connect($this->db_host, $this->db_user, $this->db_password, $this->db_database, $this->db_port = 3306);
 
         if (!$this->connection)
           {

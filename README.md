@@ -7,7 +7,7 @@ Lightweight and easy to use
 ----
 
 ===Changelog===
- * new version *1.2.10* available (18 May 2024)
+ * new version *1.2.11* available (19 May 2024)
  * new version *0.2.6* available (15 May 2024)
  * new version *0.2.5* available (17 Mar 2018)
  * new version *0.2.4* available (30 May 2015)
