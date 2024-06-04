@@ -3,10 +3,10 @@ name: PHPUnit Tests with MySQL
 on:
   push:
     branches:
-      - dev
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   test:
