@@ -7,8 +7,8 @@ class SimpleDBTest extends TestCase {
 
     protected function setUp(): void {
         $dsn = 'sqlite::memory:';
-        $username = '';
-        $password = '';
+        $username = 'test_user';
+        $password = 'root_password';
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
