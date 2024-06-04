@@ -7,8 +7,8 @@ class SimpleDBTest extends TestCase {
 
     protected function setUp(): void {
         $dsn = 'mysql:host=localhost';
-        $username = 'username';
-        $password = 'password';
+        $username = 'test_user';
+        $password = 'root_password';
         $dbName = 'test_database';
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
