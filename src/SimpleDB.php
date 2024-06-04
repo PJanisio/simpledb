@@ -4,7 +4,7 @@ class SimpleDB {
     private $pdo;
     private $queryCount = 0;
     private $queries = [];
-    
+
     public function __construct(string $dsn, string $username, string $password, array $options = []) {
         try {
             $defaultOptions = [
@@ -19,14 +19,6 @@ class SimpleDB {
         }
     }
 
-    /**
-     * Executes a query and returns the statement.
-     *
-     * @param string $sql The SQL query.
-     * @param array $params Parameters to bind to the query.
-     * @return PDOStatement The executed statement.
-     * @throws Exception If the query execution fails.
-     */
     public function query(string $sql, array $params = []): PDOStatement {
         try {
             $startTime = microtime(true);
@@ -48,36 +40,15 @@ class SimpleDB {
         }
     }
 
-    /**
-     * Fetches a single row from the database.
-     *
-     * @param string $sql The SQL query.
-     * @param array $params Parameters to bind to the query.
-     * @return array|null The fetched row, or null if no row was found.
-     */
     public function fetch(string $sql, array $params = []): ?array {
         $result = $this->query($sql, $params)->fetch();
         return $result === false ? null : $result;
     }
 
-    /**
-     * Fetches all rows from the database.
-     *
-     * @param string $sql The SQL query.
-     * @param array $params Parameters to bind to the query.
-     * @return array The fetched rows.
-     */
     public function fetchAll(string $sql, array $params = []): array {
         return $this->query($sql, $params)->fetchAll();
     }
 
-    /**
-     * Executes a raw SQL query without fetching results automatically.
-     *
-     * @param string $sql The raw SQL query.
-     * @return PDOStatement The executed statement.
-     * @throws Exception If the query execution fails.
-     */
     public function execute(string $sql): PDOStatement {
         try {
             $startTime = microtime(true);
@@ -97,25 +68,57 @@ class SimpleDB {
         }
     }
 
-    /**
-     * Returns the number of results from the last executed query.
-     *
-     * @param PDOStatement $stmt The PDO statement.
-     * @return int The number of rows.
-     */
     public function rowCount(PDOStatement $stmt): int {
         return $stmt->rowCount();
     }
 
-    /**
-     * Returns the total number of queries executed and details of each query.
-     *
-     * @return array An array containing the query count and the query details.
-     */
     public function queryCount(): array {
         return [
             'count' => $this->queryCount,
             'queries' => $this->queries
         ];
+    }
+
+    public function insert(string $table, array $data): bool {
+        $columns = implode(", ", array_keys($data));
+        $placeholders = implode(", ", array_fill(0, count($data), '?'));
+        $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
+        return $this->query($sql, array_values($data))->rowCount() > 0;
+    }
+
+    public function update(string $table, array $data, string $where, array $params = []): bool {
+        $setClause = implode(", ", array_map(fn($key) => "$key = ?", array_keys($data)));
+        $sql = "UPDATE $table SET $setClause WHERE $where";
+        return $this->query($sql, array_merge(array_values($data), $params))->rowCount() > 0;
+    }
+
+    public function delete(string $table, string $where, array $params = []): bool {
+        $sql = "DELETE FROM $table WHERE $where";
+        return $this->query($sql, $params)->rowCount() > 0;
+    }
+
+    public function beginTransaction(): bool {
+        return $this->pdo->beginTransaction();
+    }
+
+    public function commit(): bool {
+        return $this->pdo->commit();
+    }
+
+    public function rollBack(): bool {
+        return $this->pdo->rollBack();
+    }
+
+    public function getLastInsertId(): string {
+        return $this->pdo->lastInsertId();
+    }
+
+    public function isConnected(): bool {
+        try {
+            $this->pdo->query('SELECT 1');
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }

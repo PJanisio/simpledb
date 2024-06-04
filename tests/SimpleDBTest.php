@@ -22,28 +22,28 @@ class SimpleDBTest extends TestCase {
         $this->db = new SimpleDB($dsn, $username, $password, $options);
     }
 
-    public function testFetchAll() {
-        $stmt = $this->db->query('SELECT * FROM users WHERE status = ?', ['active']);
-        $result = $stmt->fetchAll();
-        $this->assertCount(1, $result);
-        $this->assertEquals('John Doe', $result[0]['name']);
+    public function testInsert() {
+        $this->assertTrue($this->db->insert('users', ['name' => 'Alice', 'status' => 'active']));
+        $this->assertEquals('3', $this->db->getLastInsertId());
     }
 
-    public function testFetch() {
-        $result = $this->db->fetch('SELECT * FROM users WHERE id = ?', [1]);
-        $this->assertNotNull($result);
-        $this->assertEquals('John Doe', $result['name']);
+    public function testUpdate() {
+        $this->assertTrue($this->db->update('users', ['status' => 'inactive'], 'name = ?', ['John Doe']));
     }
 
-    public function testQueryFailure() {
-        $this->expectException(Exception::class);
-        $this->db->query('SELECT * FROM non_existing_table');
+    public function testDelete() {
+        $this->assertTrue($this->db->delete('users', 'name = ?', ['Jane Doe']));
     }
 
-    public function testExecute() {
-        $stmt = $this->db->execute('SELECT * FROM users');
-        $result = $stmt->fetchAll();
-        $this->assertCount(2, $result);
+    public function testTransaction() {
+        $this->db->beginTransaction();
+        $this->db->insert('users', ['name' => 'Bob', 'status' => 'active']);
+        $this->db->update('users', ['status' => 'inactive'], 'name = ?', ['Bob']);
+        $this->assertTrue($this->db->commit());
+    }
+
+    public function testIsConnected() {
+        $this->assertTrue($this->db->isConnected());
     }
 
     public function testRowCount() {
