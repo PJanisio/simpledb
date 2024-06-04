@@ -1,0 +1,23 @@
+{
+    "name": "pjanisio/simpledb",
+    "description": "A simple database abstraction layer",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pawel Janisio",
+            "email": "p.janisio@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "YourVendor\\YourPackage\\": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}

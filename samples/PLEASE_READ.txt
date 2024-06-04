@@ -1,2 +1,0 @@
-After you install this class in your web directory, remember to delete sample directory or secure it with f.e htaccess.
-To not allow your guests checking your database security :)
