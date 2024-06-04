@@ -1,6 +1,8 @@
 <?php
 
-class SimpleDBTest extends PHPUnit_Framework_TestCase  {
+use PHPUnit\Framework\TestCase;
+
+class SimpleDBTest extends TestCase {
     private $db;
 
     protected function setUp(): void {
