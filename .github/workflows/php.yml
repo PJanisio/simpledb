@@ -47,8 +47,5 @@ jobs:
           done
           echo "MySQL is available"
 
-      - name: Run Database Migrations
-        run: php artisan migrate --force
-
       - name: Run PHPUnit Tests
         run: vendor/bin/phpunit --colors=always --coverage-text
