@@ -26,17 +26,13 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Install PHP and Composer
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          tools: composer
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --no-progress
+      -   uses: actions/checkout@v4
+      -   uses: php-actions/composer@v6 # Use composer or alternative dependency management
+      -   uses: php-actions/phpunit@v3 # Specify the version of PHPUnit
+          with:
+            version: 9.6 # Use the latest version or specify a specific one
+            php_version: 7.4 # Specify the PHP version
+            configuration: tests/phpunit.xml # Path to your phpunit.xml file
 
       - name: Wait for MySQL Service
         run: |
@@ -47,5 +43,5 @@ jobs:
           done
           echo "MySQL is available"
 
-      - name: Run PHPUnit Tests
-        run: vendor/bin/phpunit
+      
+
