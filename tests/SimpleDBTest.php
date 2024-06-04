@@ -6,20 +6,42 @@ class SimpleDBTest extends TestCase {
     private $db;
 
     protected function setUp(): void {
-        $dsn = 'sqlite::memory:';
-        $username = 'test_user';
-        $password = 'root_password';
+        $dsn = 'mysql:host=localhost';
+        $username = 'username';
+        $password = 'password';
+        $dbName = 'test_database';
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ];
 
-        $pdo = new PDO($dsn);
-        $pdo->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, status TEXT)');
-        $pdo->exec('INSERT INTO users (name, status) VALUES ("John Doe", "active")');
-        $pdo->exec('INSERT INTO users (name, status) VALUES ("Jane Doe", "inactive")');
+        $this->db = new SimpleDB($dsn, $username, $password, $dbName, $options);
+        $this->initializeTestData();
+    }
 
-        $this->db = new SimpleDB($dsn, $username, $password, $options);
+    protected function tearDown(): void {
+        $this->cleanupTestData();
+    }
+
+    private function initializeTestData(): void {
+        $this->db->execute('CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))');
+        $this->db->execute('INSERT INTO users (name) VALUES ("Alice")');
+        $this->db->execute('INSERT INTO users (name) VALUES ("Bob")');
+    }
+
+    private function cleanupTestData(): void {
+        $this->db->execute('DROP TABLE users');
+    }
+
+    public function testFetchAll(): void {
+        $result = $this->db->fetchAll('SELECT * FROM users');
+        $this->assertCount(2, $result);
+    }
+
+    public function testFetch(): void {
+        $result = $this->db->fetch('SELECT * FROM users WHERE id = ?', [1]);
+        $this->assertNotNull($result);
+        $this->assertEquals('Alice', $result['name']);
     }
 
     public function testInsert() {

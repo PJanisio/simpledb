@@ -5,7 +5,7 @@ class SimpleDB {
     private $queryCount = 0;
     private $queries = [];
 
-    public function __construct(string $dsn, string $username, string $password, array $options = []) {
+    public function __construct(string $dsn, string $username, string $password, string $dbName, array $options = []) {
         try {
             $defaultOptions = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -13,11 +13,13 @@ class SimpleDB {
             ];
             $options = array_replace($defaultOptions, $options);
 
-            $this->pdo = new PDO($dsn, $username, $password, $options);
+            $this->pdo = new PDO("$dsn;dbname=$dbName", $username, $password, $options);
         } catch (PDOException $e) {
             throw new Exception('Database connection failed: ' . $e->getMessage(), 0, $e);
         }
     }
+
+
 
     public function query(string $sql, array $params = []): PDOStatement {
         try {

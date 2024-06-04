@@ -13,7 +13,7 @@
 ```php
 try {
     // Create an instance of SimpleDB
-    $db = new SimpleDB($dsn, $username, $password, $options);
+    $db = new SimpleDB($dsn, $username, $password, $dbName, $options);
 
     // Example usage
     $stmt = $db->execute('SELECT * FROM users');
