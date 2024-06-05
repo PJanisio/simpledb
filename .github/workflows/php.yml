@@ -48,6 +48,18 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
 
+      - name: Output Composer Suggests
+        run: composer suggests
+
+      - name: Install Suggested Packages
+        run: |
+          suggested=$(composer suggests --all)
+          if [ ! -z "$suggested" ]; then
+            echo "$suggested" | grep -oP '(?<=suggests installing )[^ ]+' | xargs -I {} composer require {}
+          else
+            echo "No suggested packages to install."
+          fi
+
       - name: Debug MySQL Connection
         run: |
           echo "Attempting MySQL connection..."
