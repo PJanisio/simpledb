@@ -1,6 +1,6 @@
 # SimpleDB - simple Mysql abstraction class
 
-**!Warning - current branch has development solutions whcih can not be used  for production. Use released version until its ready!**
+**! Warning - current branch has development solutions whcih can not be used  for production. Use released version until its ready!**
 
 ## Development version 2.X.X
 
