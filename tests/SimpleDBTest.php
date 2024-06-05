@@ -82,14 +82,14 @@ class SimpleDBTest extends TestCase
 
     public function testInsert()
     {
-        $data = ['username' => 'john', 'email' => 'john@example.com'];
+        $data = ['name' => 'john', 'email' => 'john@example.com'];
         $result = $this->db->insert('users', $data);
         $this->assertTrue($result);
     }
 
     public function testUpdate()
     {
-        $data = ['username' => 'johnny'];
+        $data = ['name' => 'johnny'];
         $result = $this->db->update('users', $data, 'id = ?', [1]);
         $this->assertTrue($result);
     }
