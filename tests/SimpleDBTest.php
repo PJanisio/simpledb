@@ -3,10 +3,12 @@
 use PHPUnit\Framework\TestCase;
 use SimpleDB\SimpleDB;
 
-class SimpleDBTest extends TestCase {
+class SimpleDBTest extends TestCase
+{
     private $db;
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         $host = getenv('DB_HOST');
         $port = getenv('DB_PORT');
         $dbName = getenv('DB_NAME');
@@ -16,107 +18,119 @@ class SimpleDBTest extends TestCase {
         $this->db = new SimpleDB($host, $port, $dbName, $username, $password);
 
         // Initialize the database
-        $this->initializeDatabase();
+        $this->initializeTestData();
     }
 
-    protected function tearDown(): void {
-        // Do not drop the users table in tearDown
-        // $this->cleanupTestData();
+    protected function tearDown(): void
+    {
+        $this->cleanupTestData();
     }
 
-    private function initializeDatabase(): void {
-        // SQL statements to initialize the database
-        $sql = "
-            -- Check if the table users already exists
-            SELECT 1 FROM users LIMIT 1;
+    private function initializeTestData(): void {
+        // Create the database if it doesn't exist
+        $this->db->execute('CREATE DATABASE IF NOT EXISTS test_database');
     
-            -- If the table doesn't exist, create it
-            CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(255),
-                email VARCHAR(255)
-            );
+        // Select the database
+        $this->db->execute('USE test_database');
     
-            -- Insert data into the table
-            INSERT INTO users (username, email) VALUES ('Alice', 'alice@example.com');
-            INSERT INTO users (username, email) VALUES ('Bob', 'bob@example.com');
-        ";
+        // Create the users table
+        $this->db->execute('CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255),
+            email VARCHAR(255)
+        )');
     
-        // Execute the SQL queries
-        $this->db->execute($sql);
+        // Insert initial data into the users table
+        $this->db->execute('INSERT INTO users (name, email) VALUES ("Alice", "alice@example.com")');
+        $this->db->execute('INSERT INTO users (name, email) VALUES ("Bob", "bob@example.com")');
     }
 
-    private function cleanupTestData(): void {
+
+    private function cleanupTestData(): void
+    {
         $this->db->execute('DROP TABLE users');
     }
 
-    public function testFetchAll(): void {
+    public function testFetchAll(): void
+    {
         $result = $this->db->fetchAll('SELECT * FROM users');
         $this->assertCount(2, $result);
     }
 
-    public function testFetch(): void {
+    public function testFetch(): void
+    {
         $result = $this->db->fetch('SELECT * FROM users WHERE id = ?', [1]);
         $this->assertNotNull($result);
         $this->assertEquals('Alice', $result['name']);
     }
 
-    public function testExecute() {
+    public function testExecute()
+    {
         $stmt = $this->db->execute('CREATE TABLE test_table (id INT)');
         $this->assertInstanceOf('PDOStatement', $stmt);
     }
 
-    public function testRowCount() {
+    public function testRowCount()
+    {
         $stmt = $this->db->query('SELECT * FROM users');
         $rowCount = $this->db->rowCount($stmt);
         $this->assertIsInt($rowCount);
     }
 
-    public function testQueryCount() {
+    public function testQueryCount()
+    {
         $queryCount = $this->db->queryCount();
         $this->assertIsArray($queryCount);
         $this->assertArrayHasKey('count', $queryCount);
         $this->assertArrayHasKey('queries', $queryCount);
     }
 
-    public function testInsert() {
+    public function testInsert()
+    {
         $data = ['username' => 'john', 'email' => 'john@example.com'];
         $result = $this->db->insert('users', $data);
         $this->assertTrue($result);
     }
 
-    public function testUpdate() {
+    public function testUpdate()
+    {
         $data = ['username' => 'johnny'];
         $result = $this->db->update('users', $data, 'id = ?', [1]);
         $this->assertTrue($result);
     }
 
-    public function testDelete() {
+    public function testDelete()
+    {
         $result = $this->db->delete('users', 'id = ?', [1]);
         $this->assertTrue($result);
     }
 
-    public function testBeginTransaction() {
+    public function testBeginTransaction()
+    {
         $result = $this->db->beginTransaction();
         $this->assertTrue($result);
     }
 
-    public function testCommit() {
+    public function testCommit()
+    {
         $result = $this->db->commit();
         $this->assertTrue($result);
     }
 
-    public function testRollBack() {
+    public function testRollBack()
+    {
         $result = $this->db->rollBack();
         $this->assertTrue($result);
     }
 
-    public function testGetLastInsertId() {
+    public function testGetLastInsertId()
+    {
         $lastInsertId = $this->db->getLastInsertId();
         $this->assertIsString($lastInsertId);
     }
 
-    public function testIsConnected() {
+    public function testIsConnected()
+    {
         $result = $this->db->isConnected();
         $this->assertTrue($result);
     }
