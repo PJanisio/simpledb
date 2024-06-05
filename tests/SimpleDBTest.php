@@ -159,15 +159,15 @@ class SimpleDBTest extends TestCase
     }
 
     public function testInvalidDataInsert()
-    {
-        // Test if an exception is thrown for inserting invalid data
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Query execution failed');
+{
+    // Test if an exception is thrown for inserting invalid data
+    $this->expectException(Exception::class);
+    $this->expectExceptionMessage('Insert query execution failed');
 
-        // Attempt to insert invalid data (missing column)
-        $data = ['name' => 'john'];
-        $this->db->insert('users', $data);
-    }
+    // Attempt to insert invalid data (missing email column)
+    $data = ['name' => 'john'];
+    $this->db->insert('users', $data);
+}
 
     public function testInvalidConnection()
     {
@@ -179,5 +179,5 @@ class SimpleDBTest extends TestCase
         $db = new SimpleDB('invalid_host', 'invalid_port', 'invalid_db', 'invalid_user', 'invalid_password');
     }
 
-    
+
 }

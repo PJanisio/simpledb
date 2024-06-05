@@ -102,24 +102,19 @@ class SimpleDB {
     }
 
     public function insert(string $table, array $data): bool {
-        // Validate data before inserting
-        if (empty($data) || count($data) === 0) {
-            throw new Exception('Invalid data provided for insertion');
+        if (empty($data)) {
+            throw new Exception('Insert data cannot be empty.');
         }
-
+    
         $columns = implode(", ", array_keys($data));
         $placeholders = implode(", ", array_fill(0, count($data), '?'));
-
-        // Check if all required columns are present in the data
-        $tableColumns = $this->getTableColumns($table);
-        foreach (array_keys($data) as $column) {
-            if (!in_array($column, $tableColumns)) {
-                throw new Exception("Column '$column' does not exist in table '$table'");
-            }
-        }
-
         $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
-        return $this->query($sql, array_values($data))->rowCount() > 0;
+    
+        try {
+            return $this->query($sql, array_values($data))->rowCount() > 0;
+        } catch (PDOException $e) {
+            throw new Exception('Insert query execution failed: ' . $e->getMessage(), 0, $e);
+        }
     }
 
     public function update(string $table, array $data, string $where, array $params = []): bool {
