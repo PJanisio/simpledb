@@ -76,3 +76,23 @@ if ($db->isConnected()) {
 }
 
 ```
+
+----
+
+===Changelog===
+
+- new version *1.2.11* available (19 May 2024)
+- new version *0.2.6* available (15 May 2024)
+- new version *0.2.5* available (17 Mar 2018)
+- new version *0.2.4* available (30 May 2015)
+- new version *0.2.3* available (27 Mar 2012)
+- new version 0.2.2a available (02 Nov 2011)
+- new version 0.2.2 available (12 Nov 2010)
+- new version 0.2.1 available (19 Feb 2010)
+- new version 0.2.0 available (09 Jan 2010)
+- new version 0.1.9 available (23 Nov 2009)
+- new version 0.1.8 available (12 Nov 2009)
+- repository clear and reset (10 Nov 2009)
+- new version 0.1.7 available (10 Oct 2009)
+
+----

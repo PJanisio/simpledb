@@ -24,7 +24,7 @@
     </coverage>
 
 	<logging>
-  <junit outputFile="tests/test_report.xml"/>
+  	<log type="junit" target="build/unit_report.xml"/>
 	</logging>
 
 </phpunit>
