@@ -146,4 +146,38 @@ class SimpleDBTest extends TestCase
         $result = $this->db->isConnected();
         $this->assertTrue($result);
     }
+
+
+
+    public function testInvalidQuery()
+    {
+        // Test if an exception is thrown for an invalid SQL query
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Query failed');
+
+        $this->db->query('INVALID SQL');
+    }
+
+    public function testInvalidDataInsert()
+    {
+        // Test if an exception is thrown for inserting invalid data
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Query execution failed');
+
+        // Attempt to insert invalid data (missing column)
+        $data = ['name' => 'john'];
+        $this->db->insert('users', $data);
+    }
+
+    public function testInvalidConnection()
+    {
+        // Test if an exception is thrown for an invalid database connection
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Database connection failed');
+
+        // Use invalid database credentials to create SimpleDB instance
+        $db = new SimpleDB('invalid_host', 'invalid_port', 'invalid_db', 'invalid_user', 'invalid_password');
+    }
+
+    
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="vendor/autoload.php"
          colors="true"
-         stopOnFailure="false"
-		 log-junit="tests/test-results.xml">
+         stopOnFailure="false">
     
     <testsuites>
         <testsuite name="SimpleDB Test Suite">
@@ -23,4 +22,9 @@
             <directory suffix=".php">src</directory>
         </include>
     </coverage>
+
+	<logging>
+  <junit outputFile="tests/test_report.xml"/>
+	</logging>
+
 </phpunit>
