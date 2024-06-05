@@ -57,7 +57,7 @@ class SimpleDB {
         return $this->query($sql, $params)->fetchAll();
     }
 
-    public function execute(string $sql): SimpleDB\PDOStatement { // Return SimpleDB\PDOStatement
+    public function execute(string $sql): PDOStatement { // Return SimpleDB\PDOStatement
         try {
             $startTime = microtime(true);
             $stmt = $this->pdo->query($sql);
@@ -70,7 +70,7 @@ class SimpleDB {
                 'execution_time' => $executionTime
             ];
 
-            return new class($stmt) extends SimpleDB\PDOStatement { // Return SimpleDB\PDOStatement
+            return new class($stmt) extends PDOStatement { // Return SimpleDB\PDOStatement
                 private $stmt;
 
                 public function __construct(PDOStatement $stmt) { // Accept PDOStatement as argument
