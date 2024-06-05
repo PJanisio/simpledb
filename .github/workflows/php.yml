@@ -29,6 +29,9 @@ jobs:
           echo "Creating MySQL database..."
           mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE IF NOT EXISTS test_database;' || exit 1
 
+      - name: Load database structure and data
+        run: mysql -h 127.0.0.1 -u root -proot test_database < tests/test_database.sql
+
       - name: Checkout code
         uses: actions/checkout@v3
 
