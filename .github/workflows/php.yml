@@ -21,6 +21,10 @@ jobs:
           --health-retries 3
 
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Start MySQL Service
         run: sudo /etc/init.d/mysql start
 
@@ -31,9 +35,6 @@ jobs:
 
       - name: Load database structure and data
         run: mysql -h 127.0.0.1 -u root -proot test_database < tests/test_database.sql
-
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
