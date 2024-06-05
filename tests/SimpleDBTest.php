@@ -1,32 +1,45 @@
 <?php
 
-namespace SimpleDB\Tests;
-
-use SimpleDB\SimpleDB;
 use PHPUnit\Framework\TestCase;
+use SimpleDB\SimpleDB;
 
 class SimpleDBTest extends TestCase {
     private $db;
 
-    public function setUp(): void {
-        // Set up a SimpleDB instance for testing
-        $this->db = new SimpleDB('localhost', '3306', 'test_database', 'root', 'password');
+    protected function setUp(): void {
+        $host = getenv('DB_HOST');
+        $port = getenv('DB_PORT');
+        $dbName = getenv('DB_NAME');
+        $username = getenv('DB_USER');
+        $password = getenv('DB_PASS');
+
+        $this->db = new SimpleDB($host, $port, $dbName, $username, $password);
+        $this->initializeTestData();
     }
 
-    public function testQuery() {
-        $stmt = $this->db->query('SELECT * FROM users');
-        $this->assertInstanceOf('PDOStatement', $stmt);
+    protected function tearDown(): void {
+        $this->cleanupTestData();
     }
 
-    public function testFetch() {
-        $result = $this->db->fetch('SELECT * FROM users WHERE id = ?', [1]);
-        $this->assertIsArray($result);
+    private function initializeTestData(): void {
+        $this->db->execute('CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))');
+        $this->db->execute('INSERT INTO users (name) VALUES ("Alice")');
+        $this->db->execute('INSERT INTO users (name) VALUES ("Bob")');
     }
 
-    public function testFetchAll() {
+    private function cleanupTestData(): void {
+        $this->db->execute('DROP TABLE users');
+    }
+
+    public function testFetchAll(): void {
         $result = $this->db->fetchAll('SELECT * FROM users');
-        $this->assertIsArray($result);
-        $this->assertGreaterThan(0, count($result));
+        $this->assertCount(2, $result);
+    }
+
+    public function testFetch(): void {
+        $result = $this->db->fetch('SELECT * FROM users WHERE id = ?', [1]);
+        $this->assertNotNull($result);
+        $this->assertEquals('Alice', $result['name']);
     }
 
     public function testExecute() {
@@ -88,5 +101,4 @@ class SimpleDBTest extends TestCase {
         $result = $this->db->isConnected();
         $this->assertTrue($result);
     }
-
 }
