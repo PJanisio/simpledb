@@ -21,12 +21,6 @@ class SimpleDBTest extends TestCase {
         $this->cleanupTestData();
     }
 
-    private function initializeTestData(): void {
-        $this->db->execute('CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255))');
-        $this->db->execute('INSERT INTO users (name) VALUES ("Alice")');
-        $this->db->execute('INSERT INTO users (name) VALUES ("Bob")');
-    }
-
     private function cleanupTestData(): void {
         $this->db->execute('DROP TABLE users');
     }

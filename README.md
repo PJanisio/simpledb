@@ -4,7 +4,7 @@
 
 ## Development version 2.X.X
 
-### Main goals:
+### Main goals
 
 - usage of PDO
 - less methods

@@ -1,7 +1,7 @@
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL, -- Change 'name' to 'username'
-    email VARCHAR(255) NOT NULL
+    username VARCHAR(255),
+    email VARCHAR(255)
 );
 
 INSERT INTO users (username, email) VALUES ('Alice', 'alice@example.com');
