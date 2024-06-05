@@ -2,21 +2,18 @@
 
 namespace SimpleDB;
 
+use PDO;
+use PDOException;
+use Exception;
+
 class SimpleDB {
     private $pdo;
     private $queryCount = 0;
     private $queries = [];
 
-    public function __construct(
-        string $host = 'localhost',
-        int $port = 3306,
-        string $dbName,
-        string $username,
-        string $password,
-        array $options = []
-    ) {
+    public function __construct(string $host, string $port, string $dbName, string $username, string $password, array $options = []) {
+        $dsn = "mysql:host=$host;port=$port;dbname=$dbName";
         try {
-            $dsn = "mysql:host=$host;port=$port;dbname=$dbName";
             $defaultOptions = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

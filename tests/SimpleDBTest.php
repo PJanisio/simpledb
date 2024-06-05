@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use SimpleDB\SimpleDB;
 
 class SimpleDBTest extends TestCase {
     private $db;

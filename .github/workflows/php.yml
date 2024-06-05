@@ -37,7 +37,7 @@ jobs:
       - name: Wait for MySQL
         run: |
           for i in {30..0}; do
-            if mysql -h "127.0.0.1" -u "root" -p"root" -e 'SELECT 1' &> /dev/null; then
+            if mysql -h "127.0.0.1" -u "root" -proot -e 'SELECT 1' &> /dev/null; then
               break
             fi
             echo 'MySQL still not ready, sleeping'
