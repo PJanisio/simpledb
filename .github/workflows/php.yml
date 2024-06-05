@@ -10,7 +10,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_ROOT_PASSWORD: 'password' # Set a password for the root user
           MYSQL_DATABASE: test_database
         ports:
           - 3306:3306
@@ -40,7 +40,7 @@ jobs:
       - name: Debug MySQL Connection
         run: |
           echo "Attempting MySQL connection..."
-          mysql -h localhost -u root -e 'SELECT 1' || exit 1
+          mysql -h localhost -u root -ppassword -e 'SELECT 1' || exit 1 # Use the specified password for the root user
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit --configuration phpunit.xml
