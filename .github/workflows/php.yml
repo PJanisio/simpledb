@@ -46,10 +46,10 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Output Composer Suggests
-        run: composer suggests
+        run: composer suggests --all
 
       - name: Install Suggested Packages
         run: |
