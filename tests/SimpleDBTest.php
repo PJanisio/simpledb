@@ -14,7 +14,6 @@ class SimpleDBTest extends TestCase {
         $password = getenv('DB_PASS');
 
         $this->db = new SimpleDB($host, $port, $dbName, $username, $password);
-        $this->initializeTestData();
     }
 
     protected function tearDown(): void {
