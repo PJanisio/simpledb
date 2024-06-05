@@ -26,15 +26,16 @@ class SimpleDBTest extends TestCase
         $this->cleanupTestData();
     }
 
-    private function initializeTestData(): void {
-    
+    private function initializeTestData(): void
+    {
+
         // Create the users table
         $this->db->execute('CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255),
             email VARCHAR(255)
         )');
-    
+
         // Insert initial data into the users table
         $this->db->execute('INSERT INTO users (name, email) VALUES ("Alice", "alice@example.com")');
         $this->db->execute('INSERT INTO users (name, email) VALUES ("Bob", "bob@example.com")');
@@ -108,12 +109,28 @@ class SimpleDBTest extends TestCase
 
     public function testCommit()
     {
+        // Begin a transaction before performing any operation
+        $this->db->beginTransaction();
+
+        // Perform some operations here...
+        $data = ['name' => 'test', 'email' => 'test@example.com'];
+        $this->db->insert('users', $data);
+
+        // Now try to commit the transaction
         $result = $this->db->commit();
         $this->assertTrue($result);
     }
 
     public function testRollBack()
     {
+        // Begin a transaction before performing any operation
+        $this->db->beginTransaction();
+
+        // Perform some operations here...
+        $data = ['name' => 'test', 'email' => 'test@example.com'];
+        $this->db->insert('users', $data);
+
+        // Now try to rollback the transaction
         $result = $this->db->rollBack();
         $this->assertTrue($result);
     }
