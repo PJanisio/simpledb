@@ -14,10 +14,35 @@ class SimpleDBTest extends TestCase {
         $password = getenv('DB_PASS');
 
         $this->db = new SimpleDB($host, $port, $dbName, $username, $password);
+
+        // Initialize the database
+        $this->initializeDatabase();
     }
 
     protected function tearDown(): void {
         $this->cleanupTestData();
+    }
+
+    private function initializeDatabase(): void {
+        // SQL statements to initialize the database
+        $sql = "
+            -- Check if the table users already exists
+            SELECT 1 FROM users LIMIT 1;
+
+            -- If the table doesn't exist, create it
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(255),
+                email VARCHAR(255)
+            );
+
+            -- Insert data into the table
+            INSERT INTO users (username, email) VALUES ('Alice', 'alice@example.com');
+            INSERT INTO users (username, email) VALUES ('Bob', 'bob@example.com');
+        ";
+
+        // Execute the SQL queries
+        $this->db->execute($sql);
     }
 
     private function cleanupTestData(): void {
