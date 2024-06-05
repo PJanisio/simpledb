@@ -1,25 +1,33 @@
 <?php
 
+namespace SimpleDB;
+
 class SimpleDB {
     private $pdo;
     private $queryCount = 0;
     private $queries = [];
 
-    public function __construct(string $dsn, string $username, string $password, string $dbName, array $options = []) {
+    public function __construct(
+        string $host = 'localhost',
+        int $port = 3306,
+        string $dbName,
+        string $username,
+        string $password,
+        array $options = []
+    ) {
         try {
+            $dsn = "mysql:host=$host;port=$port;dbname=$dbName";
             $defaultOptions = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ];
             $options = array_replace($defaultOptions, $options);
 
-            $this->pdo = new PDO("$dsn;dbname=$dbName", $username, $password, $options);
+            $this->pdo = new PDO($dsn, $username, $password, $options);
         } catch (PDOException $e) {
             throw new Exception('Database connection failed: ' . $e->getMessage(), 0, $e);
         }
     }
-
-
 
     public function query(string $sql, array $params = []): PDOStatement {
         try {

@@ -13,20 +13,17 @@
 ## Example usage
 
 ```php
-try {
-    // Create an instance of SimpleDB
-    $db = new SimpleDB($dsn, $username, $password, $dbName, $options);
+$host = 'localhost';
+$port = 3306;
+$dbName = 'my_database';
+$username = 'username';
+$password = 'password';
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
 
-    // Example usage
-    $stmt = $db->execute('SELECT * FROM users');
-    while ($row = $stmt->fetch()) {
-        print_r($row);
-    }
-
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
-}
-
+$db = new SimpleDB($host, $port, $dbName, $username, $password);
 ```
 
 ## Example Insert

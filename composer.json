@@ -13,11 +13,22 @@
         "php": ">=7.4"
     },
     "autoload": {
-        "classmap": [
-            "src/"
-        ]
+        "psr-4": {
+            "SimpleDB\\": "src/"
+        }
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
+    },
+    "keywords": [
+        "database",
+        "abstraction",
+        "pdo",
+        "mysql"
+    ],
+    "homepage": "https://github.com/PJanisio/simpledb",
+    "support": {
+        "email": "p.janisio@gmail.com",
+        "issues": "https://github.com/PJanisio/simpledb/issues"
     }
 }
