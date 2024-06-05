@@ -57,6 +57,12 @@ class SimpleDB {
         return $this->query($sql, $params)->fetchAll();
     }
 
+    private function getTableColumns(string $table): array {
+        $stmt = $this->query("DESCRIBE $table");
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        return $columns;
+    }
+
     public function execute(string $sql): PDOStatement { // Return SimpleDB\PDOStatement
         try {
             $startTime = microtime(true);
@@ -96,8 +102,22 @@ class SimpleDB {
     }
 
     public function insert(string $table, array $data): bool {
+        // Validate data before inserting
+        if (empty($data) || count($data) === 0) {
+            throw new Exception('Invalid data provided for insertion');
+        }
+
         $columns = implode(", ", array_keys($data));
         $placeholders = implode(", ", array_fill(0, count($data), '?'));
+
+        // Check if all required columns are present in the data
+        $tableColumns = $this->getTableColumns($table);
+        foreach (array_keys($data) as $column) {
+            if (!in_array($column, $tableColumns)) {
+                throw new Exception("Column '$column' does not exist in table '$table'");
+            }
+        }
+
         $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
         return $this->query($sql, array_values($data))->rowCount() > 0;
     }
