@@ -24,6 +24,11 @@ jobs:
       - name: Start MySQL Service
         run: sudo /etc/init.d/mysql start
 
+      - name: Create MySQL Database
+        run: |
+          echo "Creating MySQL database..."
+          mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE IF NOT EXISTS test_database;' || exit 1
+
       - name: Checkout code
         uses: actions/checkout@v3
 
