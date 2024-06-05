@@ -1,8 +1,8 @@
 # SimpleDB - simple Mysql abstraction class
 
-**! Warning - current branch has development solutions whcih can not be used  for production. Use released version until its ready!**
+**! Warning - current branch has development solutions which can not be used  for production. Use released version until its ready!**
 
-![PHPUnit](https://img.shields.io/github/actions/workflow/status/PJanisio/simpledb/php.yml?branch=main&label=tests&logo=phpunit)
+![PHPUnit](https://img.shields.io/github/actions/workflow/status/PJanisio/simpledb/tests/php.yml?branch=main&label=tests&logo=phpunit)
 
 ## Development version 2.X.X
 
