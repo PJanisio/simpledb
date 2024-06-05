@@ -5,6 +5,7 @@ namespace SimpleDB;
 use PDO;
 use PDOException;
 use Exception;
+use PDOStatement; // Import PDOStatement class
 
 class SimpleDB {
     private $pdo;
@@ -56,7 +57,7 @@ class SimpleDB {
         return $this->query($sql, $params)->fetchAll();
     }
 
-    public function execute(string $sql): PDOStatement {
+    public function execute(string $sql): SimpleDB\PDOStatement { // Return SimpleDB\PDOStatement
         try {
             $startTime = microtime(true);
             $stmt = $this->pdo->query($sql);
@@ -69,7 +70,15 @@ class SimpleDB {
                 'execution_time' => $executionTime
             ];
 
-            return $stmt;
+            return new class($stmt) extends SimpleDB\PDOStatement { // Return SimpleDB\PDOStatement
+                private $stmt;
+
+                public function __construct(PDOStatement $stmt) { // Accept PDOStatement as argument
+                    $this->stmt = $stmt;
+                }
+
+                // Implement the necessary methods from PDOStatement
+            };
         } catch (PDOException $e) {
             throw new Exception('Query execution failed: ' . $e->getMessage(), 0, $e);
         }
