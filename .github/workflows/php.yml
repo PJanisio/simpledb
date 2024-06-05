@@ -21,6 +21,9 @@ jobs:
           --health-retries 3
 
     steps:
+      - name: Start MySQL Service
+        run: sudo /etc/init.d/mysql start
+
       - name: Checkout code
         uses: actions/checkout@v3
 
