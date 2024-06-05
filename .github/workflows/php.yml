@@ -1,43 +1,52 @@
-name: PHPUnit Tests with MySQL
+name: PHPUnit Tests
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
 
 jobs:
-  test:
-    name: Run PHPUnit Tests
+  phpunit:
     runs-on: ubuntu-latest
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_database
-          MYSQL_USER: test_user
-          MYSQL_PASSWORD: test_password
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
 
     steps:
-      -   uses: actions/checkout@v4
-      -   uses: php-actions/composer@v6 # Use composer or alternative dependency management
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Wait for MySQL Service
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: pdo_mysql
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+      - name: Wait for MySQL
         run: |
-          echo "Waiting for MySQL service to become available..."
-          until mysql -h127.0.0.1 -uroot -proot_password -e ";" &>/dev/null; do
-            echo "MySQL is unavailable - sleeping"
-            sleep 5
+          for i in {30..0}; do
+            if mysql -h "127.0.0.1" -u "root" -p"root" -e 'SELECT 1' &> /dev/null; then
+              break
+            fi
+            echo 'MySQL still not ready, sleeping'
+            sleep 1
           done
-          echo "MySQL is available"
+          if [ "$i" = 0 ]; then
+            echo 'MySQL did not start in time' >&2
+            exit 1
+          fi
 
-      - name: Run PHPUnit Tests
-        run: vendor/bin/phpunit tests --coverage-text 
-
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --configuration phpunit.xml
