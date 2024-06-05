@@ -40,7 +40,8 @@ jobs:
       - name: Debug MySQL Connection
         run: |
           echo "Attempting MySQL connection..."
-          mysql -h localhost -u root -ppassword -e 'SELECT 1' || exit 1 # Use the specified password for the root user
+          export MYSQL_PWD=password
+          mysql -h localhost -u root -e 'SELECT 1' || exit 1
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit --configuration phpunit.xml
