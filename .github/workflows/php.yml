@@ -27,6 +27,13 @@ jobs:
       - name: Start MySQL Service
         run: sudo /etc/init.d/mysql start
 
+      - name: Create MySQL Database
+        run: |
+          echo "Creating MySQL database..."
+          mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE IF NOT EXISTS test_database;' || exit 1
+          # Check if the database is created
+          mysql -h 127.0.0.1 -u root -proot -e 'USE test_database;' || exit 1
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:

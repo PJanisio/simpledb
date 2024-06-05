@@ -27,11 +27,6 @@ class SimpleDBTest extends TestCase
     }
 
     private function initializeTestData(): void {
-        // Create the database if it doesn't exist
-        $this->db->execute('CREATE DATABASE IF NOT EXISTS test_database');
-    
-        // Select the database
-        $this->db->execute('USE test_database');
     
         // Create the users table
         $this->db->execute('CREATE TABLE IF NOT EXISTS users (
