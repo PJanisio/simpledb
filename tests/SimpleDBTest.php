@@ -20,7 +20,8 @@ class SimpleDBTest extends TestCase {
     }
 
     protected function tearDown(): void {
-        $this->cleanupTestData();
+        // Do not drop the users table in tearDown
+        // $this->cleanupTestData();
     }
 
     private function initializeDatabase(): void {
@@ -28,19 +29,19 @@ class SimpleDBTest extends TestCase {
         $sql = "
             -- Check if the table users already exists
             SELECT 1 FROM users LIMIT 1;
-
+    
             -- If the table doesn't exist, create it
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(255),
                 email VARCHAR(255)
             );
-
+    
             -- Insert data into the table
             INSERT INTO users (username, email) VALUES ('Alice', 'alice@example.com');
             INSERT INTO users (username, email) VALUES ('Bob', 'bob@example.com');
         ";
-
+    
         // Execute the SQL queries
         $this->db->execute($sql);
     }
