@@ -147,6 +147,16 @@ class SimpleDBTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testTruncate()
+    {
+        // Truncate the users table
+        $this->db->truncate('users');
+
+        // Verify the table is empty after truncation
+        $result = $this->db->fetchAll('SELECT * FROM users');
+        $this->assertCount(0, $result);
+    }
+
 
 
     public function testInvalidQuery()

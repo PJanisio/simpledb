@@ -21,10 +21,7 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <log type="junit" target="build/unit_report.xml"/>
     </coverage>
-
-	<logging>
-  	<log type="junit" target="build/unit_report.xml"/>
-	</logging>
 
 </phpunit>

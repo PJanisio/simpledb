@@ -8,11 +8,24 @@
 
 ### Main goals
 
-- usage of PDO
-- less methods
-- compatibility from PHP 7.4 - 8.3 ensured
+- preserve simple usage as in version 1.X.X
+- use of PDO
+- less methods better maintability
+- compatibility from PHP 7.4 - 8.3
 
-## Example usage
+
+## Example of raw SQL statement execution
+
+```php
+// Example: Using the execute method to run a raw SQL statement
+    $sql = "UPDATE `users` SET `email` = 'john.doe@example.com' WHERE `username` = 'john_doe'";
+    $stmt = $db->execute($sql);
+
+    echo "Number of affected rows: " . $db->rowCount($stmt) . "\n";
+
+```
+
+## Example usage (all basic methods)
 
 ```php
 <?php
@@ -87,6 +100,8 @@ try {
 
 
 ```
+
+
 
 ----
 
