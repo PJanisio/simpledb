@@ -15,65 +15,76 @@
 ## Example usage
 
 ```php
-$host = 'localhost';
-$port = 3306;
-$dbName = 'my_database';
-$username = 'username';
-$password = 'password';
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+<?php
 
-$db = new SimpleDB($host, $port, $dbName, $username, $password);
-```
+require 'path/to/SimpleDB.php'; // Adjust the path to where your SimpleDB.php is located
 
-## Example Insert
+use SimpleDB\SimpleDB;
 
-```php
-$db->insert('users', ['name' => 'Alice', 'status' => 'active']);
-echo 'Last Insert ID: ' . $db->getLastInsertId();
-
-```
-
-## Example Update
-
-```php
-$db->update('users', ['status' => 'inactive'], 'name = ?', ['Alice']);
-
-```
-
-## Example Delete
-
-```php
-$db->delete('users', 'name = ?', ['Alice']);
-
-```
-
-## Example Transaction
-
-```php
-$db->beginTransaction();
 try {
-    $db->insert('users', ['name' => 'Bob', 'status' => 'active']);
-    $db->update('users', ['status' => 'inactive'], 'name = ?', ['Bob']);
-    $db->commit();
+    // Create a new instance of the SimpleDB class
+    $db = new SimpleDB(dbName: 'my_database', username: 'username', password: 'password');
+
+    // Check if the connection is successful
+    if ($db->isConnected()) {
+        echo "Connected to the database successfully.\n";
+    } else {
+        echo "Failed to connect to the database.\n";
+    }
+
+    // Example: Executing a query to fetch all rows from a table
+    $sql = 'SELECT * FROM `users`';
+    $result = $db->fetchAll($sql);
+
+    echo "Data from users table:\n";
+    foreach ($result as $row) {
+        print_r($row);
+    }
+
+    // Example: Inserting a new record into the table
+    $insertData = [
+        'username' => 'john_doe',
+        'email' => 'john.doe@example.com',
+    ];
+
+    if ($db->insert('users', $insertData)) {
+        echo "Record inserted successfully.\n";
+    } else {
+        echo "Failed to insert record.\n";
+    }
+
+    // Example: Updating a record in the table
+    $updateData = [
+        'email' => 'john.new@example.com',
+    ];
+    $where = "username = 'john_doe'";
+
+    if ($db->update('users', $updateData, $where)) {
+        echo "Record updated successfully.\n";
+    } else {
+        echo "Failed to update record.\n";
+    }
+
+    // Example: Deleting a record from the table
+    $where = "username = 'john_doe'";
+
+    if ($db->delete('users', $where)) {
+        echo "Record deleted successfully.\n";
+    } else {
+        echo "Failed to delete record.\n";
+    }
+
+    // Example: Truncating the users table
+    if ($db->truncate('users')) {
+        echo "Table truncated successfully.\n";
+    } else {
+        echo "Failed to truncate table.\n";
+    }
+
 } catch (Exception $e) {
-    $db->rollBack();
-    echo 'Transaction failed: ' . $e->getMessage();
+    echo 'Error: ' . $e->getMessage() . "\n";
 }
 
-```
-
-## Example Connection Test
-
-```php
-
-if ($db->isConnected()) {
-    echo 'Connected to the database';
-} else {
-    echo 'Not connected to the database';
-}
 
 ```
 

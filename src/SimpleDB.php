@@ -5,14 +5,21 @@ namespace SimpleDB;
 use PDO;
 use PDOException;
 use Exception;
-use PDOStatement; // Import PDOStatement class
+use PDOStatement;
 
 class SimpleDB {
     private $pdo;
     private $queryCount = 0;
     private $queries = [];
 
-    public function __construct(string $host, string $port, string $dbName, string $username, string $password, array $options = []) {
+    public function __construct(
+        string $host = 'localhost',
+        string $port = '3306',
+        string $dbName,
+        string $username,
+        string $password,
+        array $options = []
+    ) {
         $dsn = "mysql:host=$host;port=$port;dbname=$dbName";
         try {
             $defaultOptions = [
@@ -58,15 +65,16 @@ class SimpleDB {
     }
 
     private function getTableColumns(string $table): array {
-        $stmt = $this->query("DESCRIBE $table");
+        $stmt = $this->query("DESCRIBE `$table`");
         $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return $columns;
     }
 
-    public function execute(string $sql): PDOStatement { // Return SimpleDB\PDOStatement
+    public function execute(string $sql): PDOStatement {
         try {
             $startTime = microtime(true);
-            $stmt = $this->pdo->query($sql);
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
             $endTime = microtime(true);
             $executionTime = $endTime - $startTime;
 
@@ -76,15 +84,7 @@ class SimpleDB {
                 'execution_time' => $executionTime
             ];
 
-            return new class($stmt) extends PDOStatement { // Return SimpleDB\PDOStatement
-                private $stmt;
-
-                public function __construct(PDOStatement $stmt) { // Accept PDOStatement as argument
-                    $this->stmt = $stmt;
-                }
-
-                // Implement the necessary methods from PDOStatement
-            };
+            return $stmt;
         } catch (PDOException $e) {
             throw new Exception('Query execution failed: ' . $e->getMessage(), 0, $e);
         }
@@ -105,11 +105,11 @@ class SimpleDB {
         if (empty($data)) {
             throw new Exception('Insert data cannot be empty.');
         }
-    
-        $columns = implode(", ", array_keys($data));
-        $placeholders = implode(", ", array_fill(0, count($data), '?'));
-        $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
-    
+
+        $columns = implode(', ', array_map(fn($col) => "`$col`", array_keys($data)));
+        $placeholders = implode(', ', array_fill(0, count($data), '?'));
+        $sql = "INSERT INTO `$table` ($columns) VALUES ($placeholders)";
+
         try {
             return $this->query($sql, array_values($data))->rowCount() > 0;
         } catch (PDOException $e) {
@@ -118,13 +118,13 @@ class SimpleDB {
     }
 
     public function update(string $table, array $data, string $where, array $params = []): bool {
-        $setClause = implode(", ", array_map(fn($key) => "$key = ?", array_keys($data)));
-        $sql = "UPDATE $table SET $setClause WHERE $where";
+        $setClause = implode(', ', array_map(fn($key) => "`$key` = ?", array_keys($data)));
+        $sql = "UPDATE `$table` SET $setClause WHERE $where";
         return $this->query($sql, array_merge(array_values($data), $params))->rowCount() > 0;
     }
 
     public function delete(string $table, string $where, array $params = []): bool {
-        $sql = "DELETE FROM $table WHERE $where";
+        $sql = "DELETE FROM `$table` WHERE $where";
         return $this->query($sql, $params)->rowCount() > 0;
     }
 
@@ -152,4 +152,15 @@ class SimpleDB {
             return false;
         }
     }
+
+    public function truncate(string $table): bool {
+        $sql = "TRUNCATE TABLE `$table`";
+        try {
+            $this->execute($sql);
+            return true;
+        } catch (PDOException $e) {
+            throw new Exception('Truncate query execution failed: ' . $e->getMessage(), 0, $e);
+        }
+    }
 }
+
