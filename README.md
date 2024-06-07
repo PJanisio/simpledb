@@ -1,18 +1,27 @@
 # SimpleDB - simple Mysql abstraction class
 
-**! Warning - current branch has development solutions which can not be used  for production. Use released version until its ready!**
-
 ![PHPUnit](https://img.shields.io/github/actions/workflow/status/PJanisio/simpledb/php.yml?branch=master&label=tests&logo=phpunit)
 
-## Development version 2.X.X
-
-### Main goals
+## Main goals
 
 - preserve simple usage as in version 1.X.X
 - use of PDO
 - less methods better maintability
 - compatibility from PHP 7.4 - 8.3
 
+## Installation with composer
+
+### With composer
+
+Add the package to your composer.json file
+
+```
+"require": 
+{
+
+        "pjanisio/simpledb": "^2.4"
+}
+```
 
 ## Example of raw SQL statement execution
 
@@ -100,8 +109,6 @@ try {
 
 
 ```
-
-
 
 ----
 

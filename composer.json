@@ -1,6 +1,7 @@
 {
     "name": "pjanisio/simpledb",
     "description": "A simple database abstraction layer",
+    "version": "2.4.36",
     "type": "library",
     "license": "MIT",
     "authors": [
