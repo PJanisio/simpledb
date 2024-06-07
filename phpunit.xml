@@ -20,10 +20,17 @@
         <env name="DB_PASS" value="root"/>
     </php>
 
-    <coverage>
+        <coverage>
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <report>
+            <html outputDirectory="build/coverage-html"/>
+            <clover outputFile="build/logs/clover.xml"/>
+        </report>
     </coverage>
 
+    <logging>
+        <log type="junit" target="build/logs/junit.xml"/>
+    </logging>
 </phpunit>
