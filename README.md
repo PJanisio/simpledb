@@ -113,7 +113,7 @@ try {
 ----
 
 ===Changelog===
-
+- new version *2.4.36* available (7 Jun 2024)
 - new version *1.2.11* available (19 May 2024)
 - new version *0.2.6* available (15 May 2024)
 - new version *0.2.5* available (17 Mar 2018)
